@@ -13,8 +13,12 @@ class Scamwatcher(DataSource):
 
     def __init__(self, company_name):
         super().__init__(company_name)
-        self.cache = pd.read_csv(
-            Scamwatcher.LOC+"cache.tsv", sep='\t', index_col='company')
+        try:
+            self.cache = pd.read_csv(
+                Scamwatcher.LOC+"cache.tsv", sep='\t', index_col='company')
+        except FileNotFoundError:
+            self.cache = pd.DataFrame(columns=['company', 'rank'])
+            self.cache.set_index('company')
             
     def return_data(self, **kwargs) -> dict:
         """ Key: Scamwatcher """

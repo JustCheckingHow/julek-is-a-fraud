@@ -25,7 +25,6 @@ class CompanyInfo:
             if indx != -1:
                 self.comments = self.comments[:indx]
             self.comments = self.comments.replace("\t", "").replace("\n", "")
-            # self.comments = re.escape(self.comments)
 
         self.redirect = None
 
@@ -62,15 +61,9 @@ class IOSCOParse:
             assert len(lst) == 6
 
             cmp = CompanyInfo(*lst)
-
             redir = entries[3].find('a')
-            print(redir.attrs['href'])
             cmp.set_redirect(redir)
-
             company_list.append(cmp)
-            # if cmp.comments != "None":
-            #     print("-------")
-            #     print(cmp.name, cmp.comments.startswith("more"), cmp.comments)
 
         return company_list
 
