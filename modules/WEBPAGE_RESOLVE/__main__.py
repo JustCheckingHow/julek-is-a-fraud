@@ -1,6 +1,5 @@
 from .webpage_resolver import WebpageResolver
 
-test = WebpageResolver("wtbitcoin")
+test = WebpageResolver("aviva")
 res = test.return_data()
-print(res)
-print(WebpageResolver.get_html(res['webpage'][0]))
+print(WebpageResolver.get_links_from_page(res['webpage'][0]))
