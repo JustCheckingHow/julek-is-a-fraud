@@ -113,7 +113,7 @@ class BacklinksScrapper():
 
 
 if __name__ == '__main__':
-    CONFIG = json.load(open('config.json'))
+    CONFIG = json.load(open('config.json', 'r'))
     file_path = os.path.dirname(os.path.abspath('__file__'))
     driver_path = os.path.join(
         os.path.dirname(file_path),
@@ -183,21 +183,3 @@ if __name__ == '__main__':
         sep='\t',
         quotechar='\'',
         quoting=csv.QUOTE_NONE)
-
-    # fields = [
-    #     'website',
-    #     'link',
-    #     'domain_score',
-    #     'page_score',
-    #     'link_type',
-    #     'anchor_text',
-    #     'first_seen',
-    #     'last_seen'
-    # ]
-
-    # with open('backlinks.csv', 'w', encoding='utf-8-sig') as f:
-    #     writer = csv.DictWriter(f, fieldnames=fields, lineterminator='\n')
-    #     writer.writeheader()
-        
-    #     for record in records:
-    #         writer.writerow(record)
