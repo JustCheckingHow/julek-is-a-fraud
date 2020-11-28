@@ -57,9 +57,6 @@ class WhoIs(DataSource):
 
 
 if __name__ == "__main__":
-    #cache = Cache('cache')
-    #cache.append(["interia.pl", "aaaa"])
-
     who = WhoIs()
     data = who.return_data(uri="interia.pl")
     print(data)
