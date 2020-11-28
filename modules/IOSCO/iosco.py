@@ -6,7 +6,6 @@ from typing import List
 
 import pandas as pd
 from bs4 import BeautifulSoup
-import re
 
 
 class CompanyInfo:
@@ -24,7 +23,8 @@ class CompanyInfo:
             indx = self.comments.find("\tmore\n")
             if indx != -1:
                 self.comments = self.comments[:indx]
-            self.comments = self.comments.replace("\t", "").replace("\n", "")
+            self.comments = self.comments.replace("\t", "").replace(
+                "\n", "").replace("\r", "")
 
         self.redirect = None
 
@@ -75,7 +75,6 @@ class IOSCOParse:
 if __name__ == "__main__":
     p = IOSCOParse()
     cl = p.parse_loop()
-    df = IOSCOParse.to_pandas(cl).to_csv("iosco.tsv",
-                                         sep='\t',
-                                         quotechar="\'",
-                                         quoting=csv.QUOTE_NONE)
+    df = IOSCOParse.to_pandas(cl)
+    df['index'] = df.index
+    df.to_csv("iosco.tsv", sep='\t', quotechar="\'", quoting=csv.QUOTE_NONE)
