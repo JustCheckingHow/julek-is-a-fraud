@@ -1,12 +1,9 @@
-import json
 import re
 from collections import defaultdict
 from typing import List
 
 import bs4
 import csv
-from numpy.lib.npyio import save
-import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import urllib.request
@@ -15,68 +12,36 @@ import glob
 
 
 def telephone_normaliser(telpho):
-    if len(telpho) < 6:
+    if len(telpho) < 7:
         return None
     else:
         return telpho
 
 
-class NumberInfo:
-    def __init__(self, number, country, danger=None) -> None:
-        self.number = number
-        self.country = country
-        self.danger = danger
-
-
-class NumberCheck:
-    def __init__(self, company_name) -> None:
-        super().__init__(self, company_name)
-        self.url = "https://www.nieznanynumer.pl/numer"
-        self.cookies = json.load(open("cookies.json", 'r'))
-
-    def check_number(self, number_str):
-        n_str = number_str.replace("+", "").replace(" ", "").strip()
-        number_query = f"{self.url}/{n_str}"
-
-        webpage = requests.get(number_query,
-                               cookies=self.cookies,
-                               headers={
-                                   'User-Agent': 'Mozilla/5.0'
-                               }).text
-        soup = BeautifulSoup(webpage, "html.parser")
-        try:
-            country = soup.find("span", {"itemprop": "addressCountry"}).text
-        except AttributeError:
-            country = "None"
-        try:
-            danger = soup.find("div", {"class": "progress-bar-rank4"}).text
-        except AttributeError:
-            danger = "None"
-
-        nbr_dat = NumberInfo(number_str,
-                             country=country,
-                             danger=danger.replace("%", ""))
-        return nbr_dat
-
-    def return_data(self, **kwargs) -> dict:
-        return self.check_number(kwargs['number_string']).__dict__
-
-
 class RandomRGXExtractor:
     def __init__(self) -> None:
         self.regexes = {
-            'phone':
+            'phone1':
             re.compile(r"[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*"),
-            'phone2':
-            re.compile(r"\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/"),
+            # 'phone2':
+            # re.compile(r"\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/"),
             'email':
             re.compile(r"^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$"),
             'website':
-            re.compile(r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+")
+            re.compile(r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+"),
+            'phone':
+            re.compile(
+                r'^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$'),
+            'phone-polish':
+            re.compile(
+                r'(?:(?:(?:\+|00)?48)|(?:\(\+?48\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-68]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\d{7}'
+            )
         }
 
     def tag_visible(self, element):
-        if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+        if element.parent.name in [
+                'style', 'script', 'head', 'title', 'meta', '[document]'
+        ]:
             return False
         if isinstance(element, bs4.element.Comment):
             return False
@@ -85,9 +50,8 @@ class RandomRGXExtractor:
     def text_from_html(self, body) -> str:
         soup = BeautifulSoup(body, 'html.parser')
         texts = soup.findAll(text=True)
-        visible_texts = filter(self.tag_visible, texts)  
+        visible_texts = filter(self.tag_visible, texts)
         return u" ".join(t.strip() for t in visible_texts)
-
 
     def download_websites(self,
                           df_fn: str,
@@ -132,6 +96,7 @@ class RandomRGXExtractor:
                         res[rgx_name].append(n)
                 else:
                     res[rgx_name].append(r)
+        print(res)
         return res
 
     def extract_wepages(self, webpage_dir: str) -> pd.DataFrame:
