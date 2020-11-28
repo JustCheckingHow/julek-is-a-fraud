@@ -17,7 +17,7 @@ DATA = pd.read_csv(path,
                    sep='\t',
                    quotechar="\'",
                    quoting=csv.QUOTE_NONE,
-                   error_bad_lines=True)
+                   error_bad_lines=False)
 DATA['name'] = DATA['name'].astype(str)
 
 
@@ -32,16 +32,17 @@ class WebpageResolver(DataSource):
         # signal.signal(signal.SIGALRM, None)
         # signal.alarm(2)
         path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t', error_bad_lines=False, escapechar='\\')
+        data = pd.read_csv(
+            path, sep='\t', error_bad_lines=False, escapechar='\\')
         data = data.dropna()
         filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
         data = data[filt]
-
         if len(data) > 0:
             self.company_name = data['name'].values[0]
 
         try:
             self.cache = pd.read_csv(WebpageResolver.CACHE_LOC,
+                                     error_bad_lines=False,
                                      sep='\t',
                                      index_col='company')
         except FileNotFoundError:
@@ -128,7 +129,8 @@ class WebpageResolver(DataSource):
 
     def find_main_domain(self, company_name):
         path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t', error_bad_lines=False, escapechar='\\')
+        data = pd.read_csv(
+            path, sep='\t', error_bad_lines=False, escapechar='\\')
         data = data.dropna()
         filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
         data = data[filt]

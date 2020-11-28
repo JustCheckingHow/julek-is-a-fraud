@@ -13,6 +13,7 @@ class Scamwatcher(DataSource):
 
     def __init__(self, company_name):
         super().__init__(company_name)
+        self.company_name = WebpageResolver(company_name).company_name
         try:
             self.cache = pd.read_csv(
                 Scamwatcher.LOC+"cache.tsv", sep='\t', index_col='company')
@@ -26,9 +27,14 @@ class Scamwatcher(DataSource):
             data = self.cache.loc[self.company_name, 'rank']
             return {"Scamwatcher": data}
 
-        page = Scamwatcher.PAGE_ROOT.format(self.company_name)
+        page = Scamwatcher.PAGE_ROOT.format(self.company_name).replace(" ", "-")
         res = requests.get(page)
         found = "Oops! That page" not in res.text
+        if not found:
+            page = Scamwatcher.PAGE_ROOT.format(' '.join(self.company_name.split()[:-1])).replace(" ", "-")
+            res = requests.get(page)
+            found = "Oops! That page" not in res.text
+
         self.cache.loc[self.company_name, 'rank'] = found
         self.cache.to_csv(Scamwatcher.LOC+"cache.tsv", sep='\t')
         return {"Scamwatcher": bool(found)}
