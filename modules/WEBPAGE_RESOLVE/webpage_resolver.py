@@ -86,18 +86,21 @@ class WebpageResolver(DataSource):
         page = WebpageResolver.get_html(url, stash=stash).lower()
         extractor = RandomRGXExtractor()
         data = extractor.parse_webpage(page)
-        print(data)
-        if len(data['website']) > 5:
+        res = []
+        if len(data['website']) > 50:
             return None
         for url in data['website']:
-            if '.gov.' in url or 'finma.ch' in url:
+            if '.gov' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
                 url = 'http://'+url
             # if WebpageResolver.check_exists(url):
-            return url
-
-        return None
+            res.append(url)
+            if ".co.uk" in url:
+                res.append(url.replace(".co.uk", ".pl"))
+            else:
+                res.append('.'.join(url.split(".")[:-1])+".pl")
+        return res
 
     @staticmethod
     def _desperate_resolve(name):
@@ -118,6 +121,7 @@ class WebpageResolver(DataSource):
         #         return main_domain
 
         # return None
+        name = name.lower()
         res = [name+".pl"]
         main_domain = name.replace(" ", "-")
         main_domain += ".pl"
@@ -131,25 +135,26 @@ class WebpageResolver(DataSource):
         path = "modules/IOSCO/iosco.tsv"
         data = pd.read_csv(
             path, sep='\t', error_bad_lines=False, escapechar='\\')
-        data = data.dropna()
-        filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
+        filt = data['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
         data = data[filt]
 
         res = []
         if len(data) > 0:
             self.company_name = data['name'].values[0]
             if 'www' in data['name'].values[0] or 'http' in data['name'].values[0]:
-                return [data['name'].values[0]]
+                url = data['name'].values[0]
+                res.append(url)
+                if ".co.uk" in url:
+                    res.append(url.replace(".co.uk", ".pl"))
+                else:
+                    res.append('.'.join(url.split(".")[:-1])+".pl")
             else:
                 if 'knf.gov.pl' in data['redirect'].values[0]:
                     return None
-
                 url = WebpageResolver._find_in_redirect(
                     data['redirect'].values[0])
-
                 if url is not None:
-                    print("URL:", url)
-                    res.append(url)
+                    res.extend(url)
 
         main_domain = WebpageResolver._desperate_resolve(self.company_name)
         res.extend(main_domain)
