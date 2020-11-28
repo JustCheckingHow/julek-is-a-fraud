@@ -25,11 +25,11 @@ function getResult(value) {
 }
 
 function displayList(data) {
-  let mock = [data];
+  let result = [data];
   let list = document.getElementById('search_list');
   list.innerHTML = '';
 
-  mock.map(el => {
+  result.map(el => {
     let btn = document.createElement("BUTTON");
     btn.innerHTML = '<div>\n' +
                     `<div style="float: left; padding: 2%;">${el.name}</div>\n` +

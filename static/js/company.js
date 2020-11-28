@@ -7,7 +7,7 @@ function addToTable(company_data, key) {
   let td_name = document.createElement("TD");
   let td_value = document.createElement("TD");
 
-  td_name.innerHTML = capitalizeFirstLetter(key);
+  td_name.innerHTML = capitalizeFirstLetter(key).replace(/_/gi, ' ');
 
   if (company_data[key][0] === "[" && company_data[key].slice(-1) === "]") {
     company_data[key] = company_data[key].slice(1, -1);
@@ -82,11 +82,16 @@ const companyDetailsTable = document.getElementById('company_details_table');
 
 addToTable(company_data, "Company Name");
 addToTable(company_data, "webpage");
-addToTable(company_data, "WhoIs");
 
 
-// const webPage = document.getElementById('web_page');
-// webPage.innerHTML = company_data['webpage'].slice(1, -1);
-//
-// const whoIs = document.getElementById('who_is');
-// whoIs.innerHTML = company_data['WhoIs'].slice(1, -1);
+let who_is_company_data = {'name': 'aviva.co.uk', 'registrar': 'CSC Corporate Domains, Inc [Tag = CSC-CORP-DOMAINS]',
+  'creation_date': 'datetime.datetime(1999, 9, 24, 0, 0)',
+  'expiration_date': 'datetime.datetime(2021, 9, 24, 0, 0)',
+  'last_updated': 'datetime.datetime(2020, 9, 20, 0, 0)',
+  'status': 'Registered until expiry date.', 'name_servers': 'dns1.cscdns.net'
+}
+
+
+for (const [key, value] of Object.entries(who_is_company_data)) {
+  addToTable(who_is_company_data, key);
+}
