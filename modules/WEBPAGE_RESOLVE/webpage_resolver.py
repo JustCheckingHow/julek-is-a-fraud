@@ -10,6 +10,15 @@ import bs4
 from modules.RGX_GAME.random_page_rgx import RandomRGXExtractor
 import hashlib
 import logging
+import csv
+
+path = "modules/IOSCO/iosco.tsv"
+DATA = pd.read_csv(path,
+                   sep='\t',
+                   quotechar="\'",
+                   quoting=csv.QUOTE_NONE,
+                   error_bad_lines=True)
+DATA['name'] = DATA['name'].astype(str)
 
 
 class WebpageResolver(DataSource):
@@ -22,17 +31,17 @@ class WebpageResolver(DataSource):
         requests.adapters.DEFAULT_RETRIES = 1
         # signal.signal(signal.SIGALRM, None)
         # signal.alarm(2)
-        path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t')
-        filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
-        data = data[filt]
+
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower())
+        data = DATA[filt]
 
         if len(data) > 0:
             self.company_name = data['name'].values[0]
 
         try:
-            self.cache = pd.read_csv(
-                WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
+            self.cache = pd.read_csv(WebpageResolver.CACHE_LOC,
+                                     sep='\t',
+                                     index_col='company')
         except FileNotFoundError:
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
@@ -42,9 +51,9 @@ class WebpageResolver(DataSource):
         page_name = webpage.replace("http://", "")
         page_name = hashlib.md5(page_name.encode('utf-8')).hexdigest()
 
-        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC+"*")
+        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC + "*")
         if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)):
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "r") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
 
         try:
@@ -52,7 +61,9 @@ class WebpageResolver(DataSource):
         except requests.exceptions.SSLError:
             return ''
         if stash:
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "w", encoding="utf-8") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name,
+                      "w",
+                      encoding="utf-8") as f:
                 f.write(page.text)
 
         return page.text
@@ -77,7 +88,7 @@ class WebpageResolver(DataSource):
             if '.gov.' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
-                url = 'http://'+url
+                url = 'http://' + url
             if WebpageResolver.check_exists(url):
                 return url
 
@@ -87,7 +98,7 @@ class WebpageResolver(DataSource):
     def _desperate_resolve(name):
         logging.info("Desperate URL resolving")
         if " " not in name:
-            main_domain = name+".pl"
+            main_domain = name + ".pl"
             if WebpageResolver.check_exists(main_domain):
                 return main_domain
         else:
@@ -97,7 +108,7 @@ class WebpageResolver(DataSource):
                 return main_domain
 
             main_domain = name.replace(" ", "")
-            main_domain = name+".pl"
+            main_domain = name + ".pl"
             if WebpageResolver.check_exists(main_domain):
                 return main_domain
 
@@ -111,7 +122,8 @@ class WebpageResolver(DataSource):
 
         if len(data) > 0:
             self.company_name = data['name'].values[0]
-            if 'www' in data['name'].values[0] or 'http' in data['name'].values[0]:
+            if 'www' in data['name'].values[0] or 'http' in data[
+                    'name'].values[0]:
                 return data['name'].values[0]
             else:
                 if 'knf.gov.pl' in data['redirect'].values[0]:
@@ -128,7 +140,8 @@ class WebpageResolver(DataSource):
         return main_domain
 
     def return_data(self, **kwargs) -> dict:
-        if self.company_name.lower() in map(lambda x: x.lower(), self.cache.index):
+        if self.company_name.lower() in map(lambda x: x.lower(),
+                                            self.cache.index):
             result = self.cache.loc[self.company_name].values[0].split(",")
             return {"webpage": result, "Company Name": self.company_name}
 

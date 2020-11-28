@@ -4,3 +4,4 @@ from .IOSCO.iosco import IOSCOParse
 from .SCAMWATCHER.scamwatcher import Scamwatcher
 from .poland_check.poland_check import PolandCheck
 from .RGX_GAME.random_page_rgx import RandomRGXExtractor
+from .KNF.knf import KNFCheck

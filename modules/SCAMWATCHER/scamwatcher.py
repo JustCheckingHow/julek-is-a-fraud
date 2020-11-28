@@ -31,5 +31,5 @@ class Scamwatcher(DataSource):
         found = "Oops! That page" not in res.text
         self.cache.loc[self.company_name, 'rank'] = found
         self.cache.to_csv(Scamwatcher.LOC+"cache.tsv", sep='\t')
-        return {"Scamwatcher": found}
+        return {"Scamwatcher": bool(found)}
 
