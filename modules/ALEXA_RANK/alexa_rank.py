@@ -23,11 +23,7 @@ class AlexaRank(DataSource):
             raise e
 
     def return_data(self, **kwargs) -> dict:
-        # if self.company_name in self.cache.index:
-        #     rank = self.cache.loc[self.company_name].values[0]
-        #     return {"AlexaRank": rank}
-
-        page = requests.get(self.webpage).text
+        page = WebpageResolver.get_html(AlexaRank.ALEXA_ROOT+self.webpage, stash=False)
 
         soup = bs4.BeautifulSoup(page, features="lxml")
         rank = soup.find_all("div", class_="rankmini-rank")[0].text.strip()
