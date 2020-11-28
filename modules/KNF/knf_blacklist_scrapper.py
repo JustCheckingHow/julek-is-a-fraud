@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
+import csv
 
 file_path = os.path.dirname(os.path.abspath('__file__'))
 driver_path = os.path.join(
@@ -29,7 +30,6 @@ for warning in warnings:
 
 # %%
 
-import csv
 fields = ['Names']
 
 rows = []
