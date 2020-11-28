@@ -84,14 +84,12 @@ addToTable(company_data, "Company Name");
 addToTable(company_data, "webpage");
 
 
-let who_is_company_data = {'name': 'aviva.co.uk', 'registrar': 'CSC Corporate Domains, Inc [Tag = CSC-CORP-DOMAINS]',
-  'creation_date': 'datetime.datetime(1999, 9, 24, 0, 0)',
-  'expiration_date': 'datetime.datetime(2021, 9, 24, 0, 0)',
-  'last_updated': 'datetime.datetime(2020, 9, 20, 0, 0)',
-  'status': 'Registered until expiry date.', 'name_servers': 'dns1.cscdns.net'
-}
+company_data["WhoIs"] = company_data["WhoIs"]
+    .slice(1, -1).replace(/'/gi, "\"")
+    .replace(/False/gi, "\"False\"")
+    .replace(/True/gi, "\"True\"");
 
-
+let who_is_company_data = JSON.parse(company_data["WhoIs"]);
 for (const [key, value] of Object.entries(who_is_company_data)) {
   addToTable(who_is_company_data, key);
 }
