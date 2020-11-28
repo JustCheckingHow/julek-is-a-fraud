@@ -6,6 +6,7 @@ from typing import List
 
 import bs4
 import requests
+import pandas as pd 
 from bs4 import BeautifulSoup
 
 
@@ -88,8 +89,8 @@ class RandomRGXExtractor:
         print(res)
 
 
-    def extract_wepages(company_list: List[CompanyInfo]) -> dict:
-        pass 
+    def extract_wepages(iosco_fn: str) -> dict:
+        for 
 
 
 
