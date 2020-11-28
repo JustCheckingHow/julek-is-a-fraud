@@ -27,6 +27,11 @@ class CompanyInfo:
             self.comments = self.comments.replace("\t", "").replace("\n", "")
             # self.comments = re.escape(self.comments)
 
+        self.redirect = None
+
+    def set_redirect(self, redirect_url) -> None:
+        self.redirect = redirect_url
+
 
 class IOSCOParse:
     def __init__(self) -> None:
@@ -52,15 +57,20 @@ class IOSCOParse:
 
         company_list: List[CompanyInfo] = []
         for entry in table_entries[1:]:
-            lst = [x.text.strip() for x in entry.findAll("td")]
+            entries = entry.findAll("td")
+            lst = [x.text.strip() for x in entries]
             assert len(lst) == 6
-            # if "\t" in lst[-1]:
-            #     print(lst[-1])
+
             cmp = CompanyInfo(*lst)
+
+            redir = entries[3].find('a')
+            print(redir.attrs['href'])
+            cmp.set_redirect(redir)
+
             company_list.append(cmp)
-            if cmp.comments != "None":
-                print("-------")
-                print(cmp.name, cmp.comments.startswith("more"), cmp.comments)
+            # if cmp.comments != "None":
+            #     print("-------")
+            #     print(cmp.name, cmp.comments.startswith("more"), cmp.comments)
 
         return company_list
 
