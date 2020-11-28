@@ -115,9 +115,10 @@ class BacklinksScrapper():
 if __name__ == '__main__':
     CONFIG = json.load(open('config.json'))
     file_path = os.path.dirname(os.path.abspath('__file__'))
-    driver_path = os.path.join(
-        os.path.dirname(file_path),
-        'BACKLINKS\chromedriver.exe')
+    driver_path="./chromedriver"
+    #driver_path = os.path.join(
+    #    os.path.dirname(file_path),
+    #    'chromedriver')
 
     scraper = BacklinksScrapper(CONFIG, driver_path)
 
