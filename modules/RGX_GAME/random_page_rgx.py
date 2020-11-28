@@ -67,9 +67,10 @@ class RandomRGXExtractor:
             re.compile(r'(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+')
         }
 
-    def parse_webpage(self) -> List[str]:
-        with open('test.html', 'r') as f:
-            html_code = f.read()
+    def parse_webpage(self, html_code=None) -> List[str]:
+        if html_code is None:
+            with open('test.html', 'r') as f:
+                html_code = f.read()
 
         soup = bs4.BeautifulSoup(html_code, "html.parser")
         paragraphs = soup.find_all("p")
@@ -86,7 +87,7 @@ class RandomRGXExtractor:
                             res[rgx_name].append(n)
                     else:
                         res[rgx_name].append(r)
-        print(res)
+        return res
 
 
     # def extract_wepages(iosco_fn: str) -> dict:
