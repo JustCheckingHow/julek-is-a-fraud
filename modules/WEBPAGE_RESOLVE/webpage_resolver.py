@@ -23,7 +23,8 @@ class WebpageResolver(DataSource):
         # signal.signal(signal.SIGALRM, None)
         # signal.alarm(2)
         path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t')
+        data = pd.read_csv(path, sep='\t', error_bad_lines=False, escapechar='\\')
+        data = data.dropna()
         filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
         data = data[filt]
 
@@ -73,46 +74,58 @@ class WebpageResolver(DataSource):
         extractor = RandomRGXExtractor()
         data = extractor.parse_webpage(page)
         print(data)
+        if len(data['website']) > 5:
+            return None
         for url in data['website']:
             if '.gov.' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
                 url = 'http://'+url
-            if WebpageResolver.check_exists(url):
-                return url
+            # if WebpageResolver.check_exists(url):
+            return url
 
         return None
 
     @staticmethod
     def _desperate_resolve(name):
         logging.info("Desperate URL resolving")
-        if " " not in name:
-            main_domain = name+".pl"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
-        else:
-            main_domain = name.replace(" ", "-")
-            main_domain += ".pl"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
+        # if " " not in name:
+        #     main_domain = name+".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
+        # else:
+        #     main_domain = name.replace(" ", "-")
+        #     main_domain += ".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
 
-            main_domain = name.replace(" ", "")
-            main_domain = name+".pl"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
+        #     main_domain = name.replace(" ", "")
+        #     main_domain += ".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
 
-        return None
+        # return None
+        res = [name+".pl"]
+        main_domain = name.replace(" ", "-")
+        main_domain += ".pl"
+        res.append(main_domain)
+        main_domain = name.replace(" ", "")
+        main_domain += ".pl"
+        res.append(main_domain)
+        return res
 
     def find_main_domain(self, company_name):
         path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t')
+        data = pd.read_csv(path, sep='\t', error_bad_lines=False, escapechar='\\')
+        data = data.dropna()
         filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
         data = data[filt]
 
+        res = []
         if len(data) > 0:
             self.company_name = data['name'].values[0]
             if 'www' in data['name'].values[0] or 'http' in data['name'].values[0]:
-                return data['name'].values[0]
+                return [data['name'].values[0]]
             else:
                 if 'knf.gov.pl' in data['redirect'].values[0]:
                     return None
@@ -122,10 +135,11 @@ class WebpageResolver(DataSource):
 
                 if url is not None:
                     print("URL:", url)
-                    return url
+                    res.append(url)
 
         main_domain = WebpageResolver._desperate_resolve(self.company_name)
-        return main_domain
+        res.extend(main_domain)
+        return res
 
     def return_data(self, **kwargs) -> dict:
         if self.company_name.lower() in map(lambda x: x.lower(), self.cache.index):
@@ -137,7 +151,7 @@ class WebpageResolver(DataSource):
         if main_domain is None:
             return {'webpage': None, "Company Name": self.company_name}
 
-        results = [main_domain]
+        results = main_domain
         # ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
         # results = WebpageResolver.find_alternative_domains(main_domain, "com")
 

@@ -12,53 +12,54 @@ from modules.WHO_IS.whois_api import WhoIs
 from pyjarowinkler import distance
 
 MAIN_DATA = './modules/IOSCO/iosco.tsv'
-KNF_WHITELIST = './modules/KNF/whitelist.csv'
-KNF_BLACKLIST = './modules/KNF/blacklist.csv'
+# KNF_WHITELIST = './modules/KNF/whitelist.csv'
+# KNF_BLACKLIST = './modules/KNF/blacklist.csv'
 
-with open(KNF_WHITELIST) as f:
-    knf_whitelist = f.readlines()[1:]
-with open(KNF_BLACKLIST) as f:
-    knf_blacklist = f.readlines()[1:]
+# with open(KNF_WHITELIST) as f:
+#     knf_whitelist = f.readlines()[1:]
+# with open(KNF_BLACKLIST) as f:
+#     knf_blacklist = f.readlines()[1:]
 
-suffixes = [
-    "sp. z o.o.", "sp. k.", "sa", "ltd", "s.l.", "s.c.", "llc", "sp. z o. o."
-]
-knf_whitelist_end, knf_blackslist_end = [], []
-for kw, kb in zip(knf_whitelist, knf_blacklist):
-    kwx = kw.lower().replace("\n", "").replace("\"", "")
-    kbx = kb.lower().replace("\n", "").replace("\"", "")
-    for s in suffixes:
-        kwx = kwx.replace(s, "")
-        kbx = kbx.replace(s, "")
+# suffixes = [
+#     "sp. z o.o.", "sp. k.", "sa", "ltd", "s.l.", "s.c.", "llc", "sp. z o. o."
+# ]
+# knf_whitelist_end, knf_blackslist_end = [], []
+# for kw, kb in zip(knf_whitelist, knf_blacklist):
+#     kwx = kw.lower().replace("\n", "").replace("\"", "")
+#     kbx = kb.lower().replace("\n", "").replace("\"", "")
+#     for s in suffixes:
+#         kwx = kwx.replace(s, "")
+#         kbx = kbx.replace(s, "")
 
-    knf_blackslist_end.append(kbx)
-    knf_whitelist_end.append(kwx)
+#     knf_blackslist_end.append(kbx)
+#     knf_whitelist_end.append(kwx)
 
 
 def run_scrapper():
     df = pd.read_csv(MAIN_DATA,
                      sep='\t',
                      quotechar="\'",
+                     error_bad_lines=False,
                      quoting=csv.QUOTE_NONE)
-    with tqdm(df['name']) as t:
+    with tqdm(df['name'].iloc[667+753:]) as t:
         for company_name in t:
             t.set_postfix(company_name=company_name)
             try:
                 res = WebpageResolver(company_name).return_data()['webpage']
-            except (UnicodeError, requests.exceptions.InvalidURL):
+            except (UnicodeError, requests.exceptions.InvalidURL, requests.exceptions.MissingSchema, AttributeError, requests.exceptions.ConnectionError):
                 continue
 
-            if res is None:
-                continue
-            if not isinstance(res, list):
-                res = [res]
-            for webpage in res:
-                if "http" not in webpage:
-                    webpage = "http://" + webpage
-                try:
-                    _ = WebpageResolver.get_html(webpage, stash=True)
-                except Exception as e:
-                    print(f"Failed for {company_name}: {webpage}")
+            # if res is None:
+            #     continue
+            # if not isinstance(res, list):
+            #     res = [res]
+            # for webpage in res:
+            #     if "http" not in webpage:
+            #         webpage = "http://" + webpage
+            #     try:
+            #         _ = WebpageResolver.get_html(webpage, stash=True)
+            #     except Exception as e:
+            #         print(f"Failed for {company_name}: {webpage}")
 
 
 """
@@ -118,7 +119,6 @@ def investigate_company(company) -> dict:
 
 
 if __name__ == "__main__":
-    pass
-    # run_scrapper()
-    res = investigate_company("Wantuch")
-    print(res)
+    run_scrapper()
+    # res = investigate_company("Wantuch")
+    # print(res)
