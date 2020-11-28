@@ -1,4 +1,3 @@
-from requests.models import Request
 from data_source import DataSource
 import requests
 import pandas as pd
@@ -17,21 +16,18 @@ class WebpageResolver(DataSource):
     DOMAINS = ["biz.pl", "com", "org", "pl", "eu", "net", "co.uk", "hk"]
     CACHE_LOC = "modules/WEBPAGE_RESOLVE/cache.tsv"
     PAGE_CACHE_LOC = "modules/WEBPAGE_RESOLVE/cache/"
-    ALARM_TIMEOUT = 2
+
     def __init__(self, company_name):
         super().__init__(company_name)
         requests.adapters.DEFAULT_RETRIES = 1
-        signal.signal(signal.SIGALRM, self.signal_handler)
-        signal.alarm(WebpageResolver.ALARM_TIMEOUT)
+        # signal.signal(signal.SIGALRM, None)
+        # signal.alarm(2)
         try:
             self.cache = pd.read_csv(
                 WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
         except FileNotFoundError:
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
-
-    def signal_handler(self, sigum, frame):
-        raise requests.exceptions.ConnectionError
 
     @staticmethod
     def get_html(webpage, stash=True):
@@ -56,13 +52,18 @@ class WebpageResolver(DataSource):
     #     soup = bs4.BeautifulSoup(html, features="lxml")
     #     links = soup.find_all("a", href=True)
 
+    # @staticmethod
+    # def _duckduckgo_resolve(webpage):
+    #     url = f"https://duckduckgo.com/?q={webpage}&ia=web"
+
     @staticmethod
     def _find_in_redirect(url, stash=False):
         page = WebpageResolver.get_html(url, stash=stash)
         extractor = RandomRGXExtractor()
-        data = extractor.parse_webpage(page)
+        data = extractor.parse_webpage(page.lower())
+        print(data)
         for url in data['website']:
-            if '.gov.' in url:
+            if '.gov.' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
                 url = 'http://'+url
@@ -70,14 +71,6 @@ class WebpageResolver(DataSource):
                 return url
 
         return None
-
-    # @staticmethod
-    # def _facebook_resolve(name):
-    #     name = name.replace(' ', '')
-    #     url = f"https://www.facebook.com/{name}/"
-    #     res = WebpageResolver._find_in_redirect(url, stash=True)
-    #     print(res)
-    #     return res
 
     @staticmethod
     def _desperate_resolve(name):
@@ -99,7 +92,6 @@ class WebpageResolver(DataSource):
             
         return None
 
-
     def find_main_domain(self, company_name):
         path = "modules/IOSCO/iosco.tsv"
         data = pd.read_csv(path, sep='\t')
@@ -118,10 +110,6 @@ class WebpageResolver(DataSource):
                     print("URL:", url)
                     return url
         
-        # main_domain = WebpageResolver._facebook_resolve(self.company_name)
-        # if main_domain is not None:
-            # return main_domain
-
         main_domain = WebpageResolver._desperate_resolve(self.company_name)
         return main_domain
 
@@ -131,16 +119,17 @@ class WebpageResolver(DataSource):
             return {"webpage": result}
 
         main_domain = self.find_main_domain(self.company_name)
-
+        
         if main_domain is None:
             return {'webpage': ''}
 
+        results = [main_domain]
         # ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
-        # results = WebpageResolver.find_alternative_domains(main_domain, ending[0])
+        # results = WebpageResolver.find_alternative_domains(main_domain, "com")
 
-        self.cache.loc[self.company_name] = ','.join(main_domain)
+        self.cache.loc[self.company_name] = ','.join(results)
         self.cache.to_csv(WebpageResolver.CACHE_LOC, sep='\t')
-        return {"webpage": main_domain}
+        return {"webpage": results}
 
     @staticmethod
     def find_alternative_domains(main_domain, ending):
@@ -164,7 +153,7 @@ class WebpageResolver(DataSource):
         if "http" not in webpage:
             webpage = "http://" + webpage
         try:
-            return requests.get(webpage)
+            return requests.get(webpage, timeout=1)
         except requests.exceptions.ConnectionError:
             return None
         except requests.exceptions.TooManyRedirects:
