@@ -3,7 +3,7 @@ from flask_cors import CORS
 
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
 from modules import Scamwatcher
-from modules.whois.whois import WhoIs
+from modules.WHO_IS.whois_api import WhoIs
 
 import json
 
@@ -29,7 +29,7 @@ def company():
 
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher]
+    modules = [AlexaRank, Scamwatcher, WhoIs]
 
     args = request.args
     name = args['name'].lower()
