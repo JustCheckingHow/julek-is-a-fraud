@@ -1,5 +1,5 @@
 from data_source import DataSource
-import grequests
+# import grequests
 import requests
 import pandas as pd
 import glob
@@ -50,28 +50,39 @@ class WebpageResolver(DataSource):
         soup = bs4.BeautifulSoup(html, features="lxml")
         links = soup.find_all("a", href=True)
 
+    def find_main_domain(self, company_name):
+        path = "modules/IOSCO/iosco.tsv"
+        data = pd.read_csv(path, sep='\t')
+        # print(data)
+
     def return_data(self, **kwargs) -> dict:
         if self.company_name in self.cache.index:
             result = self.cache.loc[self.company_name].values[0].split(",")
             return {"webpage": result}
 
-        result = self.find_domains()
+        # print(self.find_main_domain(self.company_name))
+        main_domain = self.company_name+".com"
+        result = self.find_domains(main_domain, ".com")
+
         self.cache.loc[self.company_name] = ','.join(result)
         self.cache.to_csv(WebpageResolver.CACHE_LOC, sep='\t')
         return {"webpage": result}
 
-    def find_domains(self):
+    def find_domains(self, main_domain, ending):
         tasks = []
         tested = []
+        res = []
         for domain in WebpageResolver.DOMAINS:
-            webpage = "http://"+self.company_name+domain
+            webpage = "http://"+main_domain.replace(ending, domain)
             tested.append(webpage)
-            tasks.append(self.check_exists(webpage))
+            res.append(self.check_exists(webpage))
 
-        res = grequests.map(tasks, exception_handler=None)
         answer = filter(lambda x: x[1] is not None, zip(tested, res))
         answer = map(lambda x: x[0], answer)
         return list(answer)
 
     def check_exists(self, webpage):
-        return grequests.get(webpage)
+        try:
+            return requests.get(webpage)
+        except requests.exceptions.ConnectionError:
+            return None
