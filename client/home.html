@@ -6,22 +6,22 @@
   <link href="css/style.css" rel="stylesheet">
   <link href="node_modules/@coreui/chartjs/dist/css/coreui-chartjs.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body class="c-app">
 
 <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
 
-
   <div class="input-group" style="padding-top: 10px">
     <div class="card-body">
-      <form class="form-horizontal" action="" method="post">
+      <form class="form-horizontal" action="" method="post" onSubmit="return false;">
         <div class="form-group row">
           <div class="col-md-12">
             <div class="input-group">
               <a class="fa fa-home" onclick="document.location='index.html'" style="font-size: 34px; margin-right: 10px"></a>
               <input class="form-control" id="search_input" type="text" name="input2-group2" placeholder="Type..." autocomplete="email"><span class="input-group-append">
-                <button onclick="onSearch()" class="btn btn-primary" type="button">Search</button></span>
+                <button onclick="onSearch()" id="search_btn" class="btn btn-info" type="button">Search</button></span>
             </div>
           </div>
         </div>
@@ -31,6 +31,7 @@
 
 </header>
 
+<div class="loader" id="loader" style="display: none"></div>
 <div class="card-body">
   <div id="search_list" class="list-group" style="padding-top: 120px">
     <h1>Search company</h1>
@@ -47,5 +48,16 @@
 <script src="node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
 <script src="node_modules/@coreui/utils/dist/coreui-utils.js"></script>
 <script src="js/home.js"></script>
+<script>
+
+  let input = document.getElementById("search_input");
+  input.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      document.getElementById("search_btn").click();
+    }
+  });
+
+</script>
 </body>
 </html>

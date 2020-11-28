@@ -6,7 +6,21 @@ function onSearch() {
 }
 
 function getResult(value) {
-  displayList();
+  let loader = document.getElementById('loader');
+  loader.style.display = 'block';
+
+  $.ajax({
+    url: "http://127.0.0.1:5000/",
+    type: "GET",
+    success: (el) => {
+      loader.style.display = 'none';
+      displayList();
+    },
+    error: function(result) {
+      console.log('error');
+    }
+  });
+
 }
 
 function displayList() {
