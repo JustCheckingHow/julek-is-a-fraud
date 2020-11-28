@@ -1,4 +1,5 @@
 import json
+from modules.IOSCO.iosco import CompanyInfo
 import re
 from collections import defaultdict
 from typing import List
@@ -85,6 +86,11 @@ class RandomRGXExtractor:
                     else:
                         res[rgx_name].append(r)
         print(res)
+
+
+    def extract_wepages(company_list: List[CompanyInfo]) -> dict:
+        pass 
+
 
 
 if __name__ == "__main__":

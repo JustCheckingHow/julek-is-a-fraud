@@ -52,11 +52,11 @@ class IOSCOParse:
 
         soup = BeautifulSoup(html_code, "html.parser")
         table_body = soup.find("table", {"id": "tbl_inv_alerts_data"})
-        table_entries = table_body.findAll("tr")
+        table_entries = table_body.find_all("tr")
 
         company_list: List[CompanyInfo] = []
         for entry in table_entries[1:]:
-            entries = entry.findAll("td")
+            entries = entry.find_all("td")
             lst = [x.text.strip() for x in entries]
             assert len(lst) == 6
 
