@@ -11,7 +11,7 @@ import os
 file_path = os.path.dirname(os.path.abspath('__file__'))
 driver_path = os.path.join(
     os.path.dirname(file_path),
-    'julek-is-a-fraud\chromedriver.exe')
+    'NNF\chromedriver.exe')
 
 # %%
 # options = Options()
