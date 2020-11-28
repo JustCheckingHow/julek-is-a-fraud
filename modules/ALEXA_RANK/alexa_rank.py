@@ -25,16 +25,20 @@ class AlexaRank(DataSource):
     def return_data(self, **kwargs) -> dict:
         page = WebpageResolver.get_html(AlexaRank.ALEXA_ROOT+self.webpage, stash=False)
 
-        soup = bs4.BeautifulSoup(page, features="lxml")
-        rank = soup.find_all("div", class_="rankmini-rank")[0].text.strip()
-        rank = rank.lstrip("#").replace(",","")
+        try:
+            soup = bs4.BeautifulSoup(page, features="lxml")
+            rank = soup.find_all("div", class_="rankmini-rank")[0].text.strip()
+            rank = rank.lstrip("#").replace(",","")
 
-        self.cache.loc[self.company_name] = rank
-        self.cache.to_csv(AlexaRank.LOC+"cache.tsv", sep='\t')
+            self.cache.loc[self.company_name] = rank
+            self.cache.to_csv(AlexaRank.LOC+"cache.tsv", sep='\t')
 
-        return {"AlexaRank": rank}
+            return {"AlexaRank": rank}
+        except IndexError:
+            # The page is so small that it's not even indexed in Alexa
+            return {"AlexaRank": -1}
 
 
 if __name__ == "__main__":
-    resource = AlexaRank("aviva")
+    resource = AlexaRank("wtbitcoin")
     print(resource.return_data())
