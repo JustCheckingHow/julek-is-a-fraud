@@ -14,7 +14,7 @@ class CompanyInfo:
         self.name = company_name
         self.regulator = regulator
         self.jurisdiction = jurisdiction
-        self.date = dt.datetime.strptime(date.replace('\t', '').split('\n')[-1], '%d %b %Y')
+        self.date = dt.datetime.strptime(date.split('\n')[-1].lstrip(' '), '%d %b %Y')
         self.subject = subject
         if comments == 'No additional comments posted.':
             self.comments = 'None'
@@ -39,7 +39,7 @@ class IOSCOParse:
         self.hard_savepoint = 'iosco.html'
 
     def parse_loop(self) -> List[CompanyInfo]:
-        if False and os.path.isfile(self.hard_savepoint):
+        if os.path.isfile(self.hard_savepoint):
             with open(self.hard_savepoint, 'rb') as f:
                 html_code = f.read()
             print('READ FROM FILE')
@@ -58,16 +58,14 @@ class IOSCOParse:
         company_list: List[CompanyInfo] = []
         for entry in table_entries[1:]:
             entries = entry.find_all('td')
-            lst = [x.text.strip() for x in entries]
+            lst = [x.text.strip().replace('\t', ' ') for x in entries]
             assert len(lst) == 6
 
             cmp = CompanyInfo(*lst)
             try:
                 redir = entries[3].find('a').attrs['href']
-            except Exception:
-                print('==========')
-                for a in lst:
-                    print(a)
+            except Exception as e:
+                redir = None
 
             cmp.set_redirect(redir)
             company_list.append(cmp)
