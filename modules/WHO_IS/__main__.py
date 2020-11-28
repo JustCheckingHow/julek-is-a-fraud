@@ -1,5 +1,5 @@
 from .whois_api import WhoIs
 
-who = WhoIs("comino")
+who = WhoIs("saxo")
 data = who.return_data()
 print(data)

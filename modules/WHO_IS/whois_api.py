@@ -93,7 +93,8 @@ class WhoIs(DataSource):
             try:
                 res[key] = reg.findall(text)[0]
             except IndexError:
-                res[key] = 'N/A'
+                # res[key] = 'N/A'
+                pass
 
         res['hidden_info'] = any(map(lambda x: 'whoisguard' in str(x).lower(), res.values()))
         res['server_in_poland'] = 'poland' in text.lower()
