@@ -76,6 +76,20 @@ class RandomRGXExtractor:
             re.compile(r"(?:(?:https?|ftp):\/\/)?[\w/\-?=%.]+\.[\w/\-?=%.]+")
         }
 
+    def tag_visible(self, element):
+        if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+            return False
+        if isinstance(element, bs4.element.Comment):
+            return False
+        return True
+
+    def text_from_html(self, body) -> str:
+        soup = BeautifulSoup(body, 'html.parser')
+        texts = soup.findAll(text=True)
+        visible_texts = filter(self.tag_visible, texts)  
+        return u" ".join(t.strip() for t in visible_texts)
+
+
     def download_websites(self,
                           df_fn: str,
                           savedir: str = "../webpages") -> None:
@@ -107,24 +121,18 @@ class RandomRGXExtractor:
                 print(e)
                 print(f"\t{index} Failed to extract {webpage}")
 
-    def parse_webpage(self, webpage_file) -> dict:
-        with open(webpage_file, 'rb') as f:
-            html_code = f.read()
-        soup = bs4.BeautifulSoup(html_code, "html.parser")
-        paragraphs = soup.find_all("p")
-
+    def parse_webpage(self, html_code=None) -> List[str]:
+        text = self.text_from_html(html_code)
         res = defaultdict(list)
-        for p in paragraphs:
-            ptext = p.text.strip()
-            for rgx_name, rgx in self.regexes.items():
-                results = re.findall(rgx, ptext)
-                for r in results:
-                    if 'phone' in rgx_name:
-                        n = telephone_normaliser(r)
-                        if n:
-                            res[rgx_name].append(n)
-                    else:
-                        res[rgx_name].append(r)
+        for rgx_name, rgx in self.regexes.items():
+            results = re.findall(rgx, text)
+            for r in results:
+                if 'phone' in rgx_name:
+                    n = telephone_normaliser(r)
+                    if n:
+                        res[rgx_name].append(n)
+                else:
+                    res[rgx_name].append(r)
         return res
 
     def extract_wepages(self, webpage_dir: str) -> pd.DataFrame:

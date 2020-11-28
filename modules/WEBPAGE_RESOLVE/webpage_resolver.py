@@ -52,13 +52,18 @@ class WebpageResolver(DataSource):
     #     soup = bs4.BeautifulSoup(html, features="lxml")
     #     links = soup.find_all("a", href=True)
 
+    # @staticmethod
+    # def _duckduckgo_resolve(webpage):
+    #     url = f"https://duckduckgo.com/?q={webpage}&ia=web"
+
     @staticmethod
     def _find_in_redirect(url, stash=False):
         page = WebpageResolver.get_html(url, stash=stash)
         extractor = RandomRGXExtractor()
-        data = extractor.parse_webpage(page)
+        data = extractor.parse_webpage(page.lower())
+        print(data)
         for url in data['website']:
-            if '.gov.' in url:
+            if '.gov.' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
                 url = 'http://'+url
@@ -66,14 +71,6 @@ class WebpageResolver(DataSource):
                 return url
 
         return None
-
-    # @staticmethod
-    # def _facebook_resolve(name):
-    #     name = name.replace(' ', '')
-    #     url = f"https://www.facebook.com/{name}/"
-    #     res = WebpageResolver._find_in_redirect(url, stash=True)
-    #     print(res)
-    #     return res
 
     @staticmethod
     def _desperate_resolve(name):
@@ -95,7 +92,6 @@ class WebpageResolver(DataSource):
             
         return None
 
-
     def find_main_domain(self, company_name):
         path = "modules/IOSCO/iosco.tsv"
         data = pd.read_csv(path, sep='\t')
@@ -114,10 +110,6 @@ class WebpageResolver(DataSource):
                     print("URL:", url)
                     return url
         
-        # main_domain = WebpageResolver._facebook_resolve(self.company_name)
-        # if main_domain is not None:
-            # return main_domain
-
         main_domain = WebpageResolver._desperate_resolve(self.company_name)
         return main_domain
 
@@ -127,9 +119,13 @@ class WebpageResolver(DataSource):
             return {"webpage": result}
 
         main_domain = self.find_main_domain(self.company_name)
+        
+        if main_domain is None:
+            return {'webpage': ''}
 
-        ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
-        results = WebpageResolver.find_alternative_domains(main_domain, ending[0])
+        results = [main_domain]
+        # ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
+        # results = WebpageResolver.find_alternative_domains(main_domain, "com")
 
         self.cache.loc[self.company_name] = ','.join(results)
         self.cache.to_csv(WebpageResolver.CACHE_LOC, sep='\t')
@@ -157,7 +153,7 @@ class WebpageResolver(DataSource):
         if "http" not in webpage:
             webpage = "http://" + webpage
         try:
-            return requests.get(webpage)
+            return requests.get(webpage, timeout=1)
         except requests.exceptions.ConnectionError:
             return None
         except requests.exceptions.TooManyRedirects:
