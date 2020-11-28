@@ -16,7 +16,7 @@ class WebpageResolver(DataSource):
         self.cache = pd.read_csv(WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
 
     @staticmethod
-    def get_html(webpage):
+    def get_html(webpage, stash=True):
         page_name = webpage.replace("http://", "")
 
         all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC+"*")
@@ -25,8 +25,9 @@ class WebpageResolver(DataSource):
                 return f.read()
 
         page = requests.get(webpage)
-        with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "w") as f:
-            f.write(page.text)
+        if stash:
+            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "w", encoding="utf-8") as f:
+                f.write(page.text)
         
         return page.text
 
