@@ -52,27 +52,30 @@ class IOSCOParse:
 
         soup = BeautifulSoup(html_code, "html.parser")
         table_body = soup.find("table", {"id": "tbl_inv_alerts_data"})
-        table_entries = table_body.findAll("tr")
+        table_entries = table_body.find_all("tr")
 
         company_list: List[CompanyInfo] = []
         for entry in table_entries[1:]:
-            entries = entry.findAll("td")
+            entries = entry.find_all("td")
             lst = [x.text.strip() for x in entries]
             assert len(lst) == 6
 
             cmp = CompanyInfo(*lst)
-            redir = entries[3].find('a')
+            redir = entries[3].find('a').attrs['href']
             cmp.set_redirect(redir)
             company_list.append(cmp)
 
         return company_list
 
     @staticmethod
-    def toPandas(comp_list: List[CompanyInfo]) -> pd.DataFrame:
+    def to_pandas(comp_list: List[CompanyInfo]) -> pd.DataFrame:
         return pd.DataFrame.from_records([c.__dict__ for c in comp_list])
 
 
 if __name__ == "__main__":
     p = IOSCOParse()
     cl = p.parse_loop()
-    df = IOSCOParse.toPandas(cl).to_csv("iosco.tsv", sep='\t')
+    df = IOSCOParse.to_pandas(cl).to_csv("iosco.tsv",
+                                         sep='\t',
+                                         quotechar="\'",
+                                         quoting=csv.QUOTE_NONE)

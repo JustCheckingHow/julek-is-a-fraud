@@ -1,10 +1,12 @@
 import json
+from modules.IOSCO.iosco import CompanyInfo
 import re
 from collections import defaultdict
 from typing import List
 
 import bs4
 import requests
+import pandas as pd 
 from bs4 import BeautifulSoup
 
 
@@ -85,6 +87,11 @@ class RandomRGXExtractor:
                     else:
                         res[rgx_name].append(r)
         print(res)
+
+
+    # def extract_wepages(iosco_fn: str) -> dict:
+        # for 
+
 
 
 if __name__ == "__main__":
