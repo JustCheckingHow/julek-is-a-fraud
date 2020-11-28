@@ -9,8 +9,12 @@ class PolandCheck(DataSource):
     def __init__(self, company_name):
         super().__init__(company_name)
         self.websites = WebpageResolver(company_name).return_data()['webpage']
-        self.cache = pd.read_csv(
-            PolandCheck.LOC+"cache.tsv", sep='\t', index_col='company')
+        try:
+            self.cache = pd.read_csv(
+                PolandCheck.LOC+"cache.tsv", sep='\t', index_col='company')
+        except FileNotFoundError:
+            self.cache = pd.DataFrame(columns=['company', 'rank'])
+            self.cache.set_index('company')
 
     def return_data(self, **kwargs) -> dict:
         for website in self.websites:
@@ -18,6 +22,3 @@ class PolandCheck(DataSource):
                 return {"in_poland": True}
 
         return {"in_poland": False}
-        
-
-

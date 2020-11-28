@@ -13,7 +13,11 @@ class WebpageResolver(DataSource):
     def __init__(self, company_name):
         super().__init__(company_name)
         requests.adapters.DEFAULT_RETRIES = 1
-        self.cache = pd.read_csv(WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
+        try:
+            self.cache = pd.read_csv(WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
+        except FileNotFoundError:
+            self.cache = pd.DataFrame(columns=['company', 'rank'])
+            self.cache.set_index('company')
 
     @staticmethod
     def get_html(webpage, stash=True):

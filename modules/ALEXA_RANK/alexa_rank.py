@@ -14,8 +14,12 @@ class AlexaRank(DataSource):
 
     def __init__(self, company_name):
         super().__init__(company_name)
-        self.cache = pd.read_csv(
-            AlexaRank.LOC+"cache.tsv", sep='\t', index_col='company')
+        try:
+            self.cache = pd.read_csv(
+                AlexaRank.LOC+"cache.tsv", sep='\t', index_col='company')
+        except FileNotFoundError:
+            self.cache = pd.DataFrame(columns=['company', 'rank'])
+            self.cache.set_index('company')
         try:
             res = WebpageResolver(company_name).return_data()['webpage']
             self.webpages = res
