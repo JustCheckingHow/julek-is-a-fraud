@@ -1,3 +1,4 @@
+from collections import defaultdict
 import csv
 import numpy as np
 import pandas as pd
@@ -9,7 +10,7 @@ from modules import Scamwatcher, WebpageResolver
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
 from modules.WHO_IS.whois_api import WhoIs
 
-from pyjarowinkler import distance
+import json
 
 MAIN_DATA = './modules/IOSCO/iosco.tsv'
 KNF_WHITELIST = './modules/KNF/whitelist.csv'
@@ -70,12 +71,10 @@ def naive_search(company_name, knf_list):
     cmp = company_name.lower()
     for s in suffixes:
         cmp = cmp.replace(s, "")
-    # top_matches = [company_name in x for x in knf_list]
     top_matches = []
     for sub in knf_list:
         if cmp in sub:
             top_matches.append(sub)
-    print(top_matches)
     return top_matches
 
 
@@ -87,7 +86,7 @@ def checkKNF_list(company_name, knf_list):
 
 def investigate_company(company) -> dict:
     """
-    
+    Get info about the company
     """
     wi = WhoIs(company)
     ar = AlexaRank(company)
@@ -100,12 +99,12 @@ def investigate_company(company) -> dict:
         bl1, bl2 = checkKNF_list(company, top_matches_bl)
         black_list_most_sim = list(zip(bl1, bl2))
     else:
-        black_list_most_sim = None
+        black_list_most_sim = []
     if top_matches_wl:
         wl1, wl2 = checkKNF_list(company, top_matches_wl)
         white_list_most_sim = list(zip(wl1, wl2))
     else:
-        white_list_most_sim = None
+        white_list_most_sim = []
     result = {
         'whitelist': white_list_most_sim,
         'blacklist': black_list_most_sim,
@@ -113,12 +112,27 @@ def investigate_company(company) -> dict:
         **ar.return_data(),
         **sw.return_data()
     }
-
     return result
+
+
+def iterate_over_companies(source_fn):
+    source_df = pd.read_csv(source_fn, sep="\t")
+
+    result_df = defaultdict(list)
+    for company, _ in tqdm(zip(source_df['company'], source_df['rank'])):
+        result = investigate_company(company=company)
+        result_df['company'].append(company)
+        result_df['rank'].append(company)
+        for r in result:
+            result_df[r].append(result[r])
+
+    df = pd.DataFrame.from_dict(result_df)
+    df.to_csv("final.csv", sep=';', index=False)
 
 
 if __name__ == "__main__":
     pass
     # run_scrapper()
-    res = investigate_company("Wantuch")
-    print(res)
+    # res = investigate_company("Wantuch")
+    # print(res)
+    iterate_over_companies("cache.tsv")
