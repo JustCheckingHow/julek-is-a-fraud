@@ -40,7 +40,7 @@ class WebpageResolver(DataSource):
         for domain in WebpageResolver.DOMAINS:
             try:
                 webpage = "http://"+self.company_name+domain
-                req = requests.head(webpage, timeout=0.1)
+                req = requests.head(webpage)
                 result.append(webpage)
             except requests.exceptions.ConnectionError:
                 pass
@@ -50,7 +50,7 @@ class WebpageResolver(DataSource):
         return {"webpage": result}
 
 if __name__=="__main__":
-    test = WebpageResolver("test")
+    test = WebpageResolver("xenitf")
     res = test.return_data()
     print(res)
     print(WebpageResolver.get_html(res['webpage'][0]))
