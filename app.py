@@ -19,7 +19,7 @@ def get_rating():
     modules = [AlexaRank, Scamwatcher, PolandCheck]
 
     args = request.args
-    name = args['name']
+    name = args['name'].lower()
 
     res = {"name": name}
     for mod in modules:
