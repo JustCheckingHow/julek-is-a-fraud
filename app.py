@@ -29,7 +29,7 @@ def company():
 
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher, WhoIs]
+    modules = [AlexaRank, Scamwatcher]
 
     args = request.args
     name = args['name'].lower()
