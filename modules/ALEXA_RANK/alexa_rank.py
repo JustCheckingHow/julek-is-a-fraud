@@ -16,7 +16,6 @@ class AlexaRank(DataSource):
         super().__init__(company_name)
         self.cache = pd.read_csv(
             AlexaRank.LOC+"cache.tsv", sep='\t', index_col='company')
-            
         try:
             res = WebpageResolver(company_name).return_data()['webpage']
             self.webpage = res[0]
@@ -32,6 +31,10 @@ class AlexaRank(DataSource):
              3 - very low
              4 - not indexed
         """
+        if self.company_name in self.cache.index:
+            result = self.cache.loc[self.company_name].values[0]
+            return {"AlexaRank": result}
+
         page = WebpageResolver.get_html(AlexaRank.ALEXA_ROOT+self.webpage, stash=False)
 
         try:
@@ -39,9 +42,9 @@ class AlexaRank(DataSource):
             rank = soup.find_all("div", class_="rankmini-rank")[0].text.strip()
             rank = int(rank.lstrip("#").replace(",",""))
 
+            rank = np.digitize(rank, AlexaRank.BINS)
             self.cache.loc[self.company_name] = rank
             self.cache.to_csv(AlexaRank.LOC+"cache.tsv", sep='\t')
-            rank = np.digitize(rank, AlexaRank.BINS)
             return {"AlexaRank": rank}
         except IndexError:
             # The page is so small that it's not even indexed in Alexa
@@ -49,5 +52,5 @@ class AlexaRank(DataSource):
 
 
 if __name__ == "__main__":
-    resource = AlexaRank("scamadviser")
+    resource = AlexaRank("scamwatcher")
     print(resource.return_data())

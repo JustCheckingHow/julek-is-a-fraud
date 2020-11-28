@@ -2,3 +2,7 @@ __pycache__/
 *.swp
 venv/
 */*/*/__pycache__
+*/*/cache*
+.env/
+.vscode/
+*.exe
