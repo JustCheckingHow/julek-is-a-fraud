@@ -10,7 +10,7 @@ import os
 file_path = os.path.dirname(os.path.abspath('__file__'))
 driver_path = os.path.join(
     os.path.dirname(file_path),
-    'julek-is-a-fraud\chromedriver.exe')
+    'KNF\chromedriver.exe')
 
 # %%
 driver = webdriver.Chrome(driver_path)
@@ -20,5 +20,25 @@ WebDriverWait(driver, 10).until(
     EC.presence_of_element_located((By.CLASS_NAME, 'table-responsive')))
 
 warnings = driver.find_elements_by_xpath('''//tr[@class='warning-row pure']''')
+records = []
 for warning in warnings:
-    print(warning.find_elements_by_tag_name('td')[1].text)
+    records += [warning.find_elements_by_tag_name('td')[1]
+                       .text.lstrip('0123456789.- ')
+                       .split(' z siedzibą')[0]
+                       .split(' (')[0]]
+
+# %%
+
+import csv
+fields = ['Names']
+
+rows = []
+for record in records:
+    record = record.replace('\n', '')
+    rows += [[record]]
+
+with open('blacklist.csv', 'w', encoding='utf-8-sig') as f:
+    write = csv.writer(f, lineterminator='\n') 
+      
+    write.writerow(fields)
+    write.writerows(rows)

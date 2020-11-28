@@ -11,13 +11,9 @@ import os
 file_path = os.path.dirname(os.path.abspath('__file__'))
 driver_path = os.path.join(
     os.path.dirname(file_path),
-    'NNF\chromedriver.exe')
+    'julek-is-a-fraud\chromedriver.exe')
 
 # %%
-# options = Options()
-# options.add_argument('--headless')
-# options.add_argument('--disable-gpu')
-# driver = webdriver.Chrome(driver_path, chrome_options=options)
 driver = webdriver.Chrome(driver_path)
 driver.get('https://www.knf.gov.pl/podmioty/wyszukiwarka_podmiotow#')
 

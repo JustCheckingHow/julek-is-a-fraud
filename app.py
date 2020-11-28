@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from modules.ALEXA_RANK.alexa_rank import AlexaRank
-from modules import Scamwatcher
+from modules import Scamwatcher, PolandCheck, AlexaRank
 
 import json
 
@@ -17,10 +16,10 @@ def hello_world():
 
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher]
+    modules = [AlexaRank, Scamwatcher, PolandCheck]
 
     args = request.args
-    name = args['name']
+    name = args['name'].lower()
 
     res = {"name": name}
     for mod in modules:
