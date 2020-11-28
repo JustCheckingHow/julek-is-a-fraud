@@ -1,4 +1,4 @@
 from .scamwatcher import Scamwatcher
 
-resource = Scamwatcher("xenitfx")
+resource = Scamwatcher("comino crypto")
 print(resource.return_data())

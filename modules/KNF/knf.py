@@ -5,9 +5,9 @@ MAIN_DATA = 'modules/IOSCO/iosco.tsv'
 KNF_WHITELIST = 'modules/KNF/whitelist.csv'
 KNF_BLACKLIST = 'modules/KNF/blacklist.csv'
 
-with open(KNF_WHITELIST) as f:
+with open(KNF_WHITELIST, 'r', encoding='utf-8') as f:
     knf_whitelist = f.read().split("\n")
-with open(KNF_BLACKLIST) as f:
+with open(KNF_BLACKLIST, 'r', encoding='utf-8') as f:
     knf_blacklist = f.read().split("\n")
 
 SUFFIXES = [
