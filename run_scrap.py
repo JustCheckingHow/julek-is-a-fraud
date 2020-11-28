@@ -1,5 +1,6 @@
 from collections import defaultdict
 import csv
+from modules.FOREX.forex import ForexReview
 import numpy as np
 import pandas as pd
 import requests
@@ -48,12 +49,13 @@ def investigate_company(company) -> dict:
     ar = AlexaRank(company)
     sw = Scamwatcher(company)
     kfc = KNFCheck(company)
-
+    fx = ForexReview(company)
     result = {
         **kfc.return_data(),
         **wi.return_data(),
         **ar.return_data(),
-        **sw.return_data()
+        **sw.return_data(),
+        **fx.return_data()
     }
     return result
 
@@ -76,6 +78,6 @@ def iterate_over_companies(source_fn):
 if __name__ == "__main__":
     pass
     # run_scrapper()
-    res = investigate_company("Wantuch")
-    print(res)
-    # iterate_over_companies("cache.tsv")
+    # res = investigate_company("blackrock")
+    # print(res)
+    iterate_over_companies("cache.tsv")
