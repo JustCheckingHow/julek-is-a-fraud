@@ -42,6 +42,8 @@ class WhoIs(DataSource):
         out_arr = []
         for uri_with_http in self.webpages:
             uri = uri_with_http.replace('http://', '')
+            if uri[-1] == "/" or uri[-1] == '.':
+                uri = uri[:-1]
             cache_resp = self.cache.check_cache(uri)
             if cache_resp is not None:
                 out_arr.append(cache_resp)
