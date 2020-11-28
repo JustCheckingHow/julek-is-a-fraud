@@ -89,8 +89,8 @@ class RandomRGXExtractor:
         print(res)
 
 
-    def extract_wepages(iosco_fn: str) -> dict:
-        for 
+    # def extract_wepages(iosco_fn: str) -> dict:
+        # for 
 
 
 
