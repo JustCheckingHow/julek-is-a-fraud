@@ -18,26 +18,27 @@ def run_scrapper():
     df = pd.read_csv(MAIN_DATA,
                      sep='\t',
                      quotechar="\'",
+                     error_bad_lines=False,
                      quoting=csv.QUOTE_NONE)
-    with tqdm(df['name']) as t:
+    with tqdm(df['name'].iloc[667+753:]) as t:
         for company_name in t:
             t.set_postfix(company_name=company_name)
             try:
                 res = WebpageResolver(company_name).return_data()['webpage']
-            except (UnicodeError, requests.exceptions.InvalidURL):
+            except (UnicodeError, requests.exceptions.InvalidURL, requests.exceptions.MissingSchema, AttributeError, requests.exceptions.ConnectionError):
                 continue
 
-            if res is None:
-                continue
-            if not isinstance(res, list):
-                res = [res]
-            for webpage in res:
-                if "http" not in webpage:
-                    webpage = "http://" + webpage
-                try:
-                    _ = WebpageResolver.get_html(webpage, stash=True)
-                except Exception as e:
-                    print(f"Failed for {company_name}: {webpage}")
+            # if res is None:
+            #     continue
+            # if not isinstance(res, list):
+            #     res = [res]
+            # for webpage in res:
+            #     if "http" not in webpage:
+            #         webpage = "http://" + webpage
+            #     try:
+            #         _ = WebpageResolver.get_html(webpage, stash=True)
+            #     except Exception as e:
+            #         print(f"Failed for {company_name}: {webpage}")
 
 
 def investigate_company(company) -> dict:
@@ -74,8 +75,6 @@ def iterate_over_companies(source_fn):
 
 
 if __name__ == "__main__":
-    pass
-    # run_scrapper()
-    res = investigate_company("Wantuch")
-    print(res)
-    # iterate_over_companies("cache.tsv")
+    run_scrapper()
+    # res = investigate_company("Wantuch")
+    # print(res)
