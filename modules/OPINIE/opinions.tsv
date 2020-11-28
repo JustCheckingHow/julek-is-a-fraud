@@ -1,0 +1,39 @@
+	name	minimal_wage	polish	trading_platforms	demo	CySec_license	FCA_license	index
+0	ActivTrades opinie	100 USD	False	ActivTrader	True	False	True	0
+1	Admiral Markets opinie	200 USD	True	MetaTrader 5	True	True	True	1
+2	ATC Brokers opinie	3000 USD	False		True	False	True	2
+3	AvaTrade opinie	100 USD	True		True	False	False	3
+4	AxiTrader opinie	0 USD	True		True	False	True	4
+5	City Index opinie	100 USD	False	WebTrader	True	False	True	5
+6	Colmex Pro opinie	2000 USD	False	WebTrader	True	True	True	6
+7	Conotoxia opinie	100 USD	True	cTrader	True	True	False	7
+8	CopyDo opinie	0 USD	False	CopyDo	True	True	False	8
+9	CoverdealFX opinie	250 USD	False	MetaTrader 5	True	True	False	9
+10	Credit Financier Invest opinie	100 USD	False	MT5	True	True	True	10
+11	Dukascopy opinie	100 USD	True	JForex 3	True	False	True	11
+12	Fortrade opinie	250 USD	True	Fortrader	True	False	True	12
+13	FXCM opinie	0 USD	False	TradingStation	True	False	True	13
+14	FXOpen opinie	100 USD	False	MetaTrader 5	True	False	True	14
+15	FXVC opinie	500 USD	False	WebTrader	True	True	False	15
+16	Global Prime opinie	500 USD	False		True	False	False	16
+17	Globtrex opinie	100 USD	True	Indigo	True	True	False	17
+18	Hantec Markets opinie	1000 USD	True	Currenex	True	False	True	18
+19	HYCM (Henyep Capital Markets) opinie	100 USD	True	MetaTrader 5	True	True	True	19
+20	ICM Capital opinie	200 USD	False		True	False	True	20
+21	ICM Europe opinie	200 USD	False		True	True	False	21
+22	InterTrader opinie	110 USD	False	ZuluTrade	True	False	True	22
+23	IQOption Europe Ltd opinie	10 USD	False	IQ Option Trader	True	True	False	23
+24	Libertex opinie	100 USD	True	Libertex	True	True	False	24
+25	London Capital Group opinie	0 USD	True	LCG Trader	True	False	True	25
+26	OANDA opinie	0 USD	False		True	False	True	26
+27	Pepperstone opinie	200 USD	False	cTrader	True	False	True	27
+28	Plus500CY Limited opinie	100 USD	True	WebTrader	True	True	True	28
+29	Purple Trading opinie	100 USD	False	cTrader	True	True	False	29
+30	Saxo Bank opinie	2000 USD	True	SaxoTraderGO	True	True	True	30
+31	Swissquote opinie	560 USD	False	MetaTrader 5	True	False	True	31
+32	ThinkMarkets opinie	250 USD	True	Trade Interceptor	True	False	True	32
+33	TickMill opinie	25 USD	True		True	True	True	33
+34	Trade360 opinie	500 USD	True	Crowdfeed	True	True	False	34
+35	TradeFred opinie	100 USD	False		True	True	False	35
+36	UFX opinie	100 USD	True	MassInsights WebTrader	True	True	False	36
+37	Z.com opinie	50 USD	True		True	False	True	37

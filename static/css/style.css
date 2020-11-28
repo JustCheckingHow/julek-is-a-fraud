@@ -1,11 +1,4 @@
 @charset "UTF-8";
-/*!
- * CoreUI - HTML, CSS, and JavaScript UI Components Library
- * @version v3.3.0
- * @link https://coreui.io/
- * Copyright (c) 2020 creativeLabs Łukasz Holeczek
- * License MIT  (https://coreui.io/license/)
- */
 :root {
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
@@ -9512,8 +9505,8 @@ html:not([dir="rtl"]) .page-item:first-child .page-link {
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #321fdb;
-  border-color: #321fdb;
+  background-color: #39f !important;
+  border-color: #39f !important;
 }
 
 .page-item.disabled .page-link {
@@ -18865,4 +18858,8 @@ a.text-dark:hover, a.text-dark:focus {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-/*# sourceMappingURL=style.css.map */
+
+input {
+  color: black !important;
+}
+
