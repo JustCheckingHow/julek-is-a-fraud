@@ -18,6 +18,7 @@ class BacklinksScrapper():
         self.driver = webdriver.Chrome(driver_path)
         self.driver.get('https://app.neilpatel.com/en/seo_analyzer/backlinks')
 
+
     def login(self):
         '''
         A hacky way to split main logic from logging in, due to the
@@ -39,6 +40,7 @@ class BacklinksScrapper():
 
         element = self.driver.find_element_by_xpath(
             '''//button[@type='submit']''').click()
+
 
     def scrape(self, websites) -> list:   
         '''
@@ -69,6 +71,7 @@ class BacklinksScrapper():
             element = self.driver.find_element_by_xpath(
                 '''//button[text() = 'Search']''')
             self.driver.execute_script('''arguments[0].click();''', element)
+            time.sleep(0.5)
 
             try:
                 WebDriverWait(self.driver, 3).until(
@@ -78,12 +81,9 @@ class BacklinksScrapper():
                 continue
             except Exception:
                 pass
-                
-            try:
-                WebDriverWait(self.driver, 5).until(
-                    EC.presence_of_element_located((By.ID, 'content')))
-            except Exception:
-                continue
+
+            WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located((By.ID, 'content')))
 
             backlinks = self.driver.find_element_by_id('content') \
                               .find_elements_by_xpath('''./div''')
@@ -107,13 +107,14 @@ class BacklinksScrapper():
 
         return records
 
+
     @staticmethod
     def to_pandas(results) -> pd.DataFrame:
         return pd.DataFrame(results)
 
 
 if __name__ == '__main__':
-    CONFIG = json.load(open('config.json'))
+    CONFIG = json.load(open('config.json', 'r'))
     file_path = os.path.dirname(os.path.abspath('__file__'))
     driver_path="./chromedriver"
     #driver_path = os.path.join(
@@ -184,21 +185,3 @@ if __name__ == '__main__':
         sep='\t',
         quotechar='\'',
         quoting=csv.QUOTE_NONE)
-
-    # fields = [
-    #     'website',
-    #     'link',
-    #     'domain_score',
-    #     'page_score',
-    #     'link_type',
-    #     'anchor_text',
-    #     'first_seen',
-    #     'last_seen'
-    # ]
-
-    # with open('backlinks.csv', 'w', encoding='utf-8-sig') as f:
-    #     writer = csv.DictWriter(f, fieldnames=fields, lineterminator='\n')
-    #     writer.writeheader()
-        
-    #     for record in records:
-    #         writer.writerow(record)

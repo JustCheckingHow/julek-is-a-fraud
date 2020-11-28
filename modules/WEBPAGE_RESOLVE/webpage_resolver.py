@@ -10,6 +10,15 @@ import bs4
 from modules.RGX_GAME.random_page_rgx import RandomRGXExtractor
 import hashlib
 import logging
+import csv
+
+path = "modules/IOSCO/iosco.tsv"
+DATA = pd.read_csv(path,
+                   sep='\t',
+                   quotechar="\'",
+                   quoting=csv.QUOTE_NONE,
+                   error_bad_lines=False)
+DATA['name'] = DATA['name'].astype(str)
 
 
 class WebpageResolver(DataSource):
@@ -22,9 +31,20 @@ class WebpageResolver(DataSource):
         requests.adapters.DEFAULT_RETRIES = 1
         # signal.signal(signal.SIGALRM, None)
         # signal.alarm(2)
+        path = "modules/IOSCO/iosco.tsv"
+        data = pd.read_csv(
+            path, sep='\t', error_bad_lines=False, escapechar='\\')
+        data = data.dropna()
+        filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
+        data = data[filt]
+        if len(data) > 0:
+            self.company_name = data['name'].values[0]
+
         try:
-            self.cache = pd.read_csv(
-                WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
+            self.cache = pd.read_csv(WebpageResolver.CACHE_LOC,
+                                     error_bad_lines=False,
+                                     sep='\t',
+                                     index_col='company')
         except FileNotFoundError:
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
@@ -34,14 +54,19 @@ class WebpageResolver(DataSource):
         page_name = webpage.replace("http://", "")
         page_name = hashlib.md5(page_name.encode('utf-8')).hexdigest()
 
-        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC+"*")
+        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC + "*")
         if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)):
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "r") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
 
-        page = requests.get(webpage)
+        try:
+            page = requests.get(webpage)
+        except requests.exceptions.SSLError:
+            return ''
         if stash:
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "w", encoding="utf-8") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name,
+                      "w",
+                      encoding="utf-8") as f:
                 f.write(page.text)
 
         return page.text
@@ -58,78 +83,101 @@ class WebpageResolver(DataSource):
 
     @staticmethod
     def _find_in_redirect(url, stash=False):
-        page = WebpageResolver.get_html(url, stash=stash)
+        page = WebpageResolver.get_html(url, stash=stash).lower()
         extractor = RandomRGXExtractor()
-        data = extractor.parse_webpage(page.lower())
-        print(data)
+        data = extractor.parse_webpage(page)
+        res = []
+        if len(data['website']) > 50:
+            return None
         for url in data['website']:
-            if '.gov.' in url or 'finma.ch' in url:
+            if '.gov' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
                 url = 'http://'+url
-            if WebpageResolver.check_exists(url):
-                return url
-
-        return None
+            # if WebpageResolver.check_exists(url):
+            res.append(url)
+            if ".co.uk" in url:
+                res.append(url.replace(".co.uk", ".pl"))
+            else:
+                res.append('.'.join(url.split(".")[:-1])+".pl")
+        return res
 
     @staticmethod
     def _desperate_resolve(name):
         logging.info("Desperate URL resolving")
-        if " " not in name:
-            main_domain = name+".com"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
-        else:
-            main_domain = name.replace(" ", "-")
-            main_domain += ".pl"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
+        # if " " not in name:
+        #     main_domain = name+".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
+        # else:
+        #     main_domain = name.replace(" ", "-")
+        #     main_domain += ".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
 
-            main_domain = name.replace(" ", "")
-            main_domain = name+".pl"
-            if WebpageResolver.check_exists(main_domain):
-                return main_domain
-            
-        return None
+        #     main_domain = name.replace(" ", "")
+        #     main_domain += ".pl"
+        #     if WebpageResolver.check_exists(main_domain):
+        #         return main_domain
+
+        # return None
+        name = name.lower()
+        res = [name+".pl"]
+        main_domain = name.replace(" ", "-")
+        main_domain += ".pl"
+        res.append(main_domain)
+        main_domain = name.replace(" ", "")
+        main_domain += ".pl"
+        res.append(main_domain)
+        return res
 
     def find_main_domain(self, company_name):
         path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(path, sep='\t')
-        filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
+        data = pd.read_csv(
+            path, sep='\t', error_bad_lines=False, escapechar='\\')
+        filt = data['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
         data = data[filt]
 
-        if len(data)>0:
+        res = []
+        if len(data) > 0:
             self.company_name = data['name'].values[0]
-
             if 'www' in data['name'].values[0] or 'http' in data['name'].values[0]:
-                return data['name'].values[0]
+                url = data['name'].values[0]
+                res.append(url)
+                if ".co.uk" in url:
+                    res.append(url.replace(".co.uk", ".pl"))
+                else:
+                    res.append('.'.join(url.split(".")[:-1])+".pl")
             else:
-                url = WebpageResolver._find_in_redirect(data['redirect'].values[0])
-
+                if 'knf.gov.pl' in data['redirect'].values[0]:
+                    return None
+                url = WebpageResolver._find_in_redirect(
+                    data['redirect'].values[0])
                 if url is not None:
-                    print("URL:", url)
-                    return url
-        
+                    res.extend(url)
+
         main_domain = WebpageResolver._desperate_resolve(self.company_name)
-        return main_domain
+        res.extend(main_domain)
+        return res
 
     def return_data(self, **kwargs) -> dict:
-        if self.company_name in self.cache.index:
+        if self.company_name.lower() in map(lambda x: x.lower(),
+                                            self.cache.index):
             result = self.cache.loc[self.company_name].values[0].split(",")
-            return {"webpage": result}
+            return {"webpage": result, "Company Name": self.company_name}
 
         main_domain = self.find_main_domain(self.company_name)
-        
-        if main_domain is None:
-            return {'webpage': ''}
 
-        results = [main_domain]
+        if main_domain is None:
+            return {'webpage': None, "Company Name": self.company_name}
+
+        results = main_domain
         # ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
         # results = WebpageResolver.find_alternative_domains(main_domain, "com")
 
         self.cache.loc[self.company_name] = ','.join(results)
         self.cache.to_csv(WebpageResolver.CACHE_LOC, sep='\t')
-        return {"webpage": results}
+        return {"webpage": results, "Company Name": self.company_name}
 
     @staticmethod
     def find_alternative_domains(main_domain, ending):
@@ -150,10 +198,11 @@ class WebpageResolver(DataSource):
 
     @staticmethod
     def check_exists(webpage):
+        print("Checking", webpage)
         if "http" not in webpage:
             webpage = "http://" + webpage
         try:
-            return requests.get(webpage, timeout=1)
+            return requests.get(webpage, timeout=10)
         except requests.exceptions.ConnectionError:
             return None
         except requests.exceptions.TooManyRedirects:

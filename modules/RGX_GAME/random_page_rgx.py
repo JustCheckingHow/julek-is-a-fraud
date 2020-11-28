@@ -12,7 +12,6 @@ from bs4 import BeautifulSoup
 import urllib.request
 import os
 import glob
-# from data_source import DataSource
 
 
 def telephone_normaliser(telpho):

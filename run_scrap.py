@@ -1,76 +1,84 @@
+from collections import defaultdict
 import csv
-from types import CodeType
-
+from modules.FOREX.forex import ForexReview
+import numpy as np
 import pandas as pd
 import requests
 from tqdm import tqdm
-
+import Levenshtein as lv
 from modules import Scamwatcher, WebpageResolver
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
 from modules.WHO_IS.whois_api import WhoIs
-
+from modules.KNF.knf import KNFCheck
+import json
 
 MAIN_DATA = './modules/IOSCO/iosco.tsv'
-KNF_WHITELIST = './modules/KNF/whitelist.csv'
-KNF_BLACKLIST = './modules/KNF/blacklist.csv'
-
-
-
-with open(KNF_WHITELIST) as f:
-    knf_whitelist = f.readlines()[1:]
-with open(KNF_BLACKLIST) as f:
-    knf_blacklist = f.readlines()[1:]
-
-# print(knf_whitelist)
 
 
 def run_scrapper():
-    df = pd.read_csv(MAIN_DATA, sep='\t', quotechar="\'", quoting=csv.QUOTE_NONE) 
-    with tqdm(df['name']) as t:
+    df = pd.read_csv(MAIN_DATA,
+                     sep='\t',
+                     quotechar="\'",
+                     error_bad_lines=False,
+                     quoting=csv.QUOTE_NONE)
+    with tqdm(df['name'].iloc[667+753:]) as t:
         for company_name in t:
             t.set_postfix(company_name=company_name)
             try:
                 res = WebpageResolver(company_name).return_data()['webpage']
-            except (UnicodeError, requests.exceptions.InvalidURL):
+            except (UnicodeError, requests.exceptions.InvalidURL, requests.exceptions.MissingSchema, AttributeError, requests.exceptions.ConnectionError):
                 continue
 
-            if res is None:
-                continue
-            if not isinstance(res, list):
-                res = [res]
-            for webpage in res:
-                if "http" not in webpage:
-                    webpage = "http://" + webpage
-                try:
-                    _ = WebpageResolver.get_html(webpage, stash=True)
-                except Exception as e:
-                    print(f"Failed for {company_name}: {webpage}")
+            # if res is None:
+            #     continue
+            # if not isinstance(res, list):
+            #     res = [res]
+            # for webpage in res:
+            #     if "http" not in webpage:
+            #         webpage = "http://" + webpage
+            #     try:
+            #         _ = WebpageResolver.get_html(webpage, stash=True)
+            #     except Exception as e:
+            #         print(f"Failed for {company_name}: {webpage}")
 
 
-"""
-
-
-
-COOPER MARKETS s.r.o	https://web.coopermarkets.com/
-"""
 def investigate_company(company) -> dict:
     """
-    Check who is 
+    Get info about the company
     """
-    
-
     wi = WhoIs(company)
     ar = AlexaRank(company)
     sw = Scamwatcher(company)
-    # knf = 
+    kfc = KNFCheck(company)
+    fx = ForexReview(company)
     result = {
-        **wi.return_data()
-        **sw.return_data()
-        **ar.return_data()
+        **kfc.return_data(),
+        **wi.return_data(),
+        **ar.return_data(),
+        **sw.return_data(),
+        **fx.return_data()
     }
+    return result
 
+
+def iterate_over_companies(source_fn):
+    source_df = pd.read_csv(source_fn, sep="\t")
+
+    result_df = defaultdict(list)
+    for company, _ in tqdm(zip(source_df['company'], source_df['rank'])):
+        result = investigate_company(company=company)
+        result_df['company'].append(company)
+        result_df['rank'].append(company)
+        for r in result:
+            result_df[r].append(result[r])
+
+    df = pd.DataFrame.from_dict(result_df)
+    df.to_csv("final.csv", sep=';', index=False)
 
 
 if __name__ == "__main__":
-    run_scrapper()
-    # investigate_company("COOPER MARKETS s.r.o")
+    pass
+    # run_scrapper()
+    # res = investigate_company("blackrock")
+    # print(res)
+    iterate_over_companies("cache.tsv")

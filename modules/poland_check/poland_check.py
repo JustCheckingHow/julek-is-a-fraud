@@ -7,7 +7,6 @@ import bs4
 import csv
 
 
-
 class PolandCheck(DataSource):
     LOC = "modules/poland_check/"
 
