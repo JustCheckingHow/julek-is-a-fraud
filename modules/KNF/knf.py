@@ -55,7 +55,6 @@ class KNFCheck(DataSource):
     def return_data(self, **kwargs) -> dict:
         top_matches_bl = self.naive_search(knf_blacklist_end)
         top_matches_wl = self.naive_search(knf_whitelist_end)
-        print(top_matches_wl)
         if top_matches_bl:
             bl1, bl2 = self.checkKNF_list(top_matches_bl)
             black_list_most_sim = list(zip(bl1, bl2))
