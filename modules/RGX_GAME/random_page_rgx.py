@@ -1,7 +1,11 @@
-from collections import defaultdict
-import bs4
+import json
 import re
+from collections import defaultdict
 from typing import List
+
+import bs4
+import requests
+from bs4 import BeautifulSoup
 
 
 def telephone_normaliser(telpho):
@@ -9,6 +13,43 @@ def telephone_normaliser(telpho):
         return None
     else:
         return telpho
+
+
+class NumberInfo:
+    def __init__(self, number, country, danger=None) -> None:
+        self.number = number
+        self.country = country
+        self.danger = danger
+
+
+class NumberCheck:
+    def __init__(self) -> None:
+        self.url = "https://www.nieznanynumer.pl/numer"
+        self.cookies = json.load(open("cookies.json", 'r'))
+
+    def check_number(self, number_str):
+        n_str = number_str.replace("+", "").replace(" ", "")
+        number_query = f"{self.url}/{n_str}"
+
+        webpage = requests.get(number_query,
+                               cookies=self.cookies,
+                               headers={
+                                   'User-Agent': 'Mozilla/5.0'
+                               }).text
+        soup = BeautifulSoup(webpage, "html.parser")
+        try:
+            country = soup.find("span", {"itemprop": "addressCountry"}).text
+        except AttributeError:
+            country = "undefined"
+        try:
+            danger = soup.find("div", {"class": "progress-bar-rank4"}).text
+        except AttributeError:
+            danger = "undefined"
+
+        nbr_dat = NumberInfo(number_str,
+                             country=country,
+                             danger=danger.replace("%", ""))
+        return nbr_dat
 
 
 class RandomRGXExtractor:
@@ -49,3 +90,5 @@ class RandomRGXExtractor:
 if __name__ == "__main__":
     rg = RandomRGXExtractor()
     rg.parse_webpage()
+
+    nc = NumberCheck()
