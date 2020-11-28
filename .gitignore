@@ -8,3 +8,8 @@ venv/
 *.exe
 node_modules/
 package-lock.json
+<<<<<<< HEAD
+=======
+config.json
+*.log
+>>>>>>> a1a44bbc32383394bb007defcb179663060bc390

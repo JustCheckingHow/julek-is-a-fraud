@@ -107,10 +107,15 @@ class RandomRGXExtractor:
                 print(e)
                 print(f"\t{index} Failed to extract {webpage}")
 
-    def parse_webpage(self, webpage_file) -> dict:
-        with open(webpage_file, 'rb') as f:
-            html_code = f.read()
+    # def parse_webpage(self, webpage_file) -> dict:
+    #     with open(webpage_file, 'rb') as f:
+    #         html_code = f.read()
             
+    def parse_webpage(self, html_code=None) -> List[str]:
+        if html_code is None:
+            with open('test.html', 'r') as f:
+                html_code = f.read()
+
         soup = bs4.BeautifulSoup(html_code, "html.parser")
         paragraphs = soup.find_all("p")
 
