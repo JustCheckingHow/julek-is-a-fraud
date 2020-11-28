@@ -17,9 +17,10 @@ class Scamwatcher(DataSource):
             Scamwatcher.LOC+"cache.tsv", sep='\t', index_col='company')
             
     def return_data(self, **kwargs) -> dict:
-        # if self.company_name in self.cache.index:
-        #     data = self.cache.loc[self.company_name, 'rank']
-        #     return {"Scamwatcher": data}
+        """ Key: Scamwatcher """
+        if self.company_name in self.cache.index:
+            data = self.cache.loc[self.company_name, 'rank']
+            return {"Scamwatcher": data}
 
         page = Scamwatcher.PAGE_ROOT.format(self.company_name)
         res = requests.get(page)
