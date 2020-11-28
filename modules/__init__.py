@@ -7,3 +7,4 @@ from .poland_check.poland_check import PolandCheck
 from .RGX_GAME.random_page_rgx import RandomRGXExtractor
 from .tax_heaven.tax_heaven import TaxHeaven
 from .WHO_IS.whois_api import WhoIs
+from .KNF.knf import KNFCheck

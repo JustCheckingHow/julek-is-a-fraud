@@ -10,6 +10,15 @@ import bs4
 from modules.RGX_GAME.random_page_rgx import RandomRGXExtractor
 import hashlib
 import logging
+import csv
+
+path = "modules/IOSCO/iosco.tsv"
+DATA = pd.read_csv(path,
+                   sep='\t',
+                   quotechar="\'",
+                   quoting=csv.QUOTE_NONE,
+                   error_bad_lines=True)
+DATA['name'] = DATA['name'].astype(str)
 
 
 class WebpageResolver(DataSource):
@@ -32,8 +41,9 @@ class WebpageResolver(DataSource):
             self.company_name = data['name'].values[0]
 
         try:
-            self.cache = pd.read_csv(
-                WebpageResolver.CACHE_LOC, sep='\t', index_col='company')
+            self.cache = pd.read_csv(WebpageResolver.CACHE_LOC,
+                                     sep='\t',
+                                     index_col='company')
         except FileNotFoundError:
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
@@ -43,9 +53,9 @@ class WebpageResolver(DataSource):
         page_name = webpage.replace("http://", "")
         page_name = hashlib.md5(page_name.encode('utf-8')).hexdigest()
 
-        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC+"*")
+        all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC + "*")
         if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)):
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "r") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
 
         try:
@@ -53,7 +63,9 @@ class WebpageResolver(DataSource):
         except requests.exceptions.SSLError:
             return ''
         if stash:
-            with open(WebpageResolver.PAGE_CACHE_LOC+page_name, "w", encoding="utf-8") as f:
+            with open(WebpageResolver.PAGE_CACHE_LOC + page_name,
+                      "w",
+                      encoding="utf-8") as f:
                 f.write(page.text)
 
         return page.text
@@ -142,7 +154,8 @@ class WebpageResolver(DataSource):
         return res
 
     def return_data(self, **kwargs) -> dict:
-        if self.company_name.lower() in map(lambda x: x.lower(), self.cache.index):
+        if self.company_name.lower() in map(lambda x: x.lower(),
+                                            self.cache.index):
             result = self.cache.loc[self.company_name].values[0].split(",")
             return {"webpage": result, "Company Name": self.company_name}
 
