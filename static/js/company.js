@@ -49,4 +49,10 @@ scamWatcherLabel.innerHTML = company_data["Scamwatcher"] === 'True' ? "Found on 
 scamWatcherIcon.className = company_data["Scamwatcher"] === 'True' ? 'fa fa-exclamation-triangle': 'fa fa-check-circle';
 
 const inPolandValue = document.getElementById('in_poland_value');
-inPolandValue.innerHTML = company_data["in_poland"] === 'True' ? "YES": "NO";
+
+if (!company_data["in_poland"]){
+  inPolandValue.innerHTML = '-'
+}
+else {
+  inPolandValue.innerHTML = company_data["in_poland"] === 'True' ? "YES": "NO";
+}
