@@ -31,10 +31,7 @@ class PolandCheck(DataSource):
         if ForexReview(self.company_name).return_data()['FOREX'] != '':
             is_on_forex = True 
 
-
         return {"in_poland": (is_polish_text or is_on_forex)}
-
-    
 
     def check_if_polish_text(self, website):
         def tag_visible(element):
