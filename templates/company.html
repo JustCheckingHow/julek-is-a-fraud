@@ -19,7 +19,7 @@
         <div class="form-group row">
           <div class="col-md-12">
             <div class="input-group">
-              <a class="fa fa-home" onclick="document.location='index.html'" style="font-size: 34px; margin-right: 10px"></a>
+              <a class="fa fa-search" onclick="document.location='index.html'" style="font-size: 34px; margin-right: 10px"></a>
               <tr>
                 <td><span id="company_title" class="display-4" style="font-size: 2.0rem;"></span></td>
               </tr>
@@ -32,9 +32,9 @@
 
 </header>
 
+<div style="display: flex">
 
-
-  <div style="width: 20%; margin-right: 20px; margin-left: 20px">
+  <div style="width: 30%; margin-right: 20px; margin-left: 20px">
     <div style="margin-top: 160px">
   <div class="card text-white bg-info">
     <div class="card-body">
@@ -46,7 +46,7 @@
       <div id="alexa_box" class="text-value-lg">
         <strong id="alexa_box_rate"></strong>
         <small class="text-muted">/4</small>
-        <div id="alexa_box_state"></div>
+        <div id="alexa_box_state" style="font-size: 3vw"></div>
       </div>
       <small class="text-muted text-uppercase font-weight-bold">Alexa Rank</small>
       <div class="progress progress-white progress-xs mt-3">
@@ -58,8 +58,8 @@
     <div>
     <div class="card">
       <div class="card-body">
-        <i id="scam_watcher_icon" aria-hidden="true" style="font-size: 100px;color: #39f;"></i>
-        <small id="scam_watcher_label" class="text-muted text-uppercase font-weight-bold" style="position: absolute;bottom: 50px; text-align: center; padding: 10px;">Test</small>
+        <i id="scam_watcher_icon" aria-hidden="true" style="font-size: 9vw;color: #39f;"></i>
+        <small id="scam_watcher_label" class="text-muted text-uppercase font-weight-bold" style="position: absolute;bottom: 50px; text-align: center; padding: 3%; top: 30%; font-size:1vw">Test</small>
       </div>
     </div>
   </div>
@@ -73,9 +73,9 @@
               <use xlink:href="node_modules/@coreui/icons/sprites/free.svg#cil-laptop"></use>
             </svg>
           </div>
-          <div>
-            <div id="in_poland_label" class="text-value text-info">Targeted to Polish clients:</div>
-            <div id="in_poland_value" class="text-muted text-uppercase font-weight-bold small" style="text-align: center;"></div>
+          <div style="margin: auto;">
+            <div id="in_poland_label" class="text-value text-info" style="font-size: 1.2vw;">Targeted to Polish clients:</div>
+            <div id="in_poland_value" class="text-muted text-uppercase font-weight-bold small" style="text-align: center; font-size: 1.2vw;"></div>
           </div>
         </div>
       </div>
@@ -84,23 +84,43 @@
   </div>
 
 
+  <div style="width: 70%;margin-top: 160px;">
+    <div style="display: flex; height: max-content;">
+      <div class="card" style="margin-right: 20px; width: 50%; height: 100%;margin-bottom: 0;">
+        <div class="card-header">Trust rate</div>
+        <div class="card-body">
+          <div class="c-chart-wrapper">
+            <canvas id="canvas-3"></canvas>
+            <div class="text-value-lg">89.9%</div>
+          </div>
+        </div>
+      </div>
 
-<div class="card" style="margin-top: 160px; height: 355px">
-  <div class="card-header">Trust rate</div>
-  <div class="card-body">
-    <div class="c-chart-wrapper">
-      <canvas id="canvas-3"></canvas>
-      <div class="text-value-lg">89.9%</div>
+      <div style="padding-right: 20px; width: 50%">
+        <div class="card card-accent-info" style="height: 100%;">
+          <div class="card-header">Company details</div>
+          <div class="card-body" style="font-size: 1.0vw; width: 40vw">
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
+
+
+    <div class="card" style="margin-top: 20px; margin-right: 20px">
+      <div class="card-header">Company details</div>
+      <div class="card-body">
+        <table class="table table-responsive-sm">
+          <tbody id="company_details_table">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
 </div>
 
-<div class="col-sm-6" style="margin-top: 160px; padding-right: 0">
-  <div class="card card-accent-info" style="height: 355px">
-    <div class="card-header">Info</div>
-    <div class="card-body">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</div>
-  </div>
+
 </div>
+
 
 
 <!-- CoreUI and necessary plugins-->

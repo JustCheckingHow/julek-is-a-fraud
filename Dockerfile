@@ -9,6 +9,8 @@ WORKDIR /app
 COPY requirements.txt /app
 COPY --from=0 /app/* /app/static/
 RUN pip install -r requirements.txt
+RUN apt-get update
+RUN apt-get install whois
 
 ENV FLASK_APP=app.py
 CMD [ "flask", "run", "--host", "0.0.0.0" ]

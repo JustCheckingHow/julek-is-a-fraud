@@ -1,7 +1,7 @@
 from modules import WebpageResolver
 from data_source import DataSource
+from modules import LanguageDetection
 import pandas as pd
-
 
 class PolandCheck(DataSource):
     LOC = "modules/poland_check/"

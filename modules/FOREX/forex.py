@@ -14,7 +14,6 @@ class ForexReview(DataSource):
         for el in DATA:
             if self.company_name in el['org'] or self.company_name in el[
                     'company']:
-                print(el)
                 return {'FOREX': el}
 
         return {'FOREX': ''}
