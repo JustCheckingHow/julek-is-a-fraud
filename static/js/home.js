@@ -10,11 +10,11 @@ function getResult(value) {
   loader.style.display = 'block';
 
   $.ajax({
-    url: "http://127.0.0.1:5000/",
+    url: `http://127.0.0.1:5000/get_record?name=${value}`,
     type: "GET",
-    success: (el) => {
+    success: (response) => {
       loader.style.display = 'none';
-      displayList();
+      displayList(response);
     },
     error: function(result) {
       console.log('error');
@@ -23,14 +23,14 @@ function getResult(value) {
 
 }
 
-function displayList() {
-  let mock = ['test', 'test', 'test', 'test', 'test', 'test'];
+function displayList(data) {
+  let mock = [data];
   let list = document.getElementById('search_list');
   list.innerHTML = '';
 
   mock.map(el => {
     let btn = document.createElement("BUTTON");
-    btn.innerHTML = el;
+    btn.innerHTML = el.name;
     btn.className = "list-group-item list-group-item-action";
     btn.type = "text";
     btn.onclick = () => onRecordSelected(el);
@@ -39,7 +39,7 @@ function displayList() {
 }
 
 function onRecordSelected(el) {
-  localStorage.setItem('company', el);
+  localStorage.setItem('company', JSON.stringify(el));
   location.href = 'company.html';
 }
 

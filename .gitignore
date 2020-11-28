@@ -6,3 +6,7 @@ venv/
 .env/
 .vscode/
 *.exe
+node_modules/
+package-lock.json
+config.json
+*.log
