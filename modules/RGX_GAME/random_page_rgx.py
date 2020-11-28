@@ -110,6 +110,7 @@ class RandomRGXExtractor:
     def parse_webpage(self, webpage_file) -> dict:
         with open(webpage_file, 'rb') as f:
             html_code = f.read()
+            
         soup = bs4.BeautifulSoup(html_code, "html.parser")
         paragraphs = soup.find_all("p")
 

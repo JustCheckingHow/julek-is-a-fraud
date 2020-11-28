@@ -1,22 +1,35 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
-from modules import Scamwatcher, PolandCheck, AlexaRank
+from modules.ALEXA_RANK.alexa_rank import AlexaRank
+from modules import Scamwatcher
+from modules.WHO_IS.whois_api import WhoIs
 
 import json
 
 app = Flask(__name__)
 CORS(app)
+@app.errorhandler(404)
 
+def not_found(e):
+    return render_template('404.html')
 
 @app.route('/')
+@app.route('/index.html')
 def hello_world():
-    return 'Hello, World!'
+    return render_template('index.html')
 
+@app.route('/home.html')
+def home():
+    return render_template('home.html')
+
+@app.route('/company.html')
+def company():
+    return render_template('company.html')
 
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher, PolandCheck]
+    modules = [AlexaRank, Scamwatcher, WhoIs]
 
     args = request.args
     name = args['name'].lower()
