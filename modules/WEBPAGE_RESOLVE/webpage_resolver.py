@@ -6,7 +6,7 @@ import os
 
 
 class WebpageResolver(DataSource):
-    DOMAINS = [".com", ".org", ".pl", ".eu"]
+    DOMAINS = [".com", ".org", ".pl", ".eu",".net"]
     CACHE_LOC = "modules/WEBPAGE_RESOLVE/cache.tsv"
     PAGE_CACHE_LOC = "modules/WEBPAGE_RESOLVE/cache/"
 
