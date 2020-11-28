@@ -31,12 +31,13 @@ class WebpageResolver(DataSource):
         requests.adapters.DEFAULT_RETRIES = 1
         # signal.signal(signal.SIGALRM, None)
         # signal.alarm(2)
-        path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(
-            path, sep='\t', error_bad_lines=False, escapechar='\\')
-        data = data.dropna()
-        filt = data['name'].apply(lambda x: company_name.lower() in x.lower())
-        data = data[filt]
+        # path = "modules/IOSCO/iosco.tsv"
+        # self.data = pd.read_csv(
+        #     path, sep='\t', error_bad_lines=False, escapechar='\\')
+        # print(self.data)
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
+        data = DATA[filt]
+
         if len(data) > 0:
             self.company_name = data['name'].values[0]
 
@@ -90,6 +91,8 @@ class WebpageResolver(DataSource):
         if len(data['website']) > 50:
             return None
         for url in data['website']:
+            if 'u.s.' in url:
+                continue
             if '.gov' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
@@ -132,11 +135,8 @@ class WebpageResolver(DataSource):
         return res
 
     def find_main_domain(self, company_name):
-        path = "modules/IOSCO/iosco.tsv"
-        data = pd.read_csv(
-            path, sep='\t', error_bad_lines=False, escapechar='\\')
-        filt = data['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
-        data = data[filt]
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
+        data = DATA[filt]
 
         res = []
         if len(data) > 0:

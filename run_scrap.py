@@ -78,7 +78,7 @@ def iterate_over_companies(source_fn):
 
 if __name__ == "__main__":
     pass
-    # run_scrapper()
+    run_scrapper()
     # res = investigate_company("blackrock")
     # print(res)
-    iterate_over_companies("cache.tsv")
+    # iterate_over_companies("cache.tsv")
