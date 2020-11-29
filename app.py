@@ -34,6 +34,11 @@ def company():
     return render_template('company.html')
 
 
+@app.route('/graph.html')
+def graph():
+    return render_template('graph.html')
+
+
 @app.route("/get_alexa", methods=['GET'])
 def get_alexa():
     res = AlexaRank(request.args['name'].lower()).return_data()

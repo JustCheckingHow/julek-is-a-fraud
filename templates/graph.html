@@ -10,6 +10,7 @@
 </head>
 
 <body class="c-app">
+<script src="https://d3js.org/d3.v4.js"></script>
 
 <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
 
@@ -21,8 +22,6 @@
             <div class="input-group">
               <a class="fa fa-search" onclick="document.location='index.html'" style="font-size: 34px; margin-right: 10px"></a>
               <a class="fa fa-connectdevelop" onclick="document.location='graph.html'" style="font-size: 34px; margin-right: 10px"></a>
-              <input class="form-control" style="color: black" id="search_input" type="text" name="input2-group2" placeholder="Type..." autocomplete="email"><span class="input-group-append">
-                <button onclick="onSearch()" id="search_btn" class="btn btn-info" type="button">Search</button></span>
             </div>
           </div>
         </div>
@@ -32,13 +31,8 @@
 
 </header>
 
-<div class="loader" id="loader" style="display: none"></div>
-<div class="card-body">
-  <div id="search_list" class="list-group" style="padding-top: 120px">
-    <h1>Analysing companies</h1>
-    <p>Wait for result...</p>
-  </div>
-</div>
+<div class="loader" id="loader"></div>
+<div style="margin-top: 100px" id="my_graph"></div>
 
 <!-- CoreUI and necessary plugins-->
 <script src="/static/node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
@@ -48,17 +42,6 @@
 <!-- Plugins and scripts required by this view-->
 <script src="/static/node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
 <script src="/static/node_modules/@coreui/utils/dist/coreui-utils.js"></script>
-<script src="/static/js/home.js"></script>
-<script>
-
-  let input = document.getElementById("search_input");
-  input.addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      document.getElementById("search_btn").click();
-    }
-  });
-
-</script>
+<script src="/static/js/graph.js"></script>
 </body>
 </html>
