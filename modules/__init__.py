@@ -11,3 +11,4 @@ from .WHO_IS.whois_api import WhoIs
 from .KNF.knf import KNFCheck
 from .NUMBER.number import NumberCheck
 from .NETWORK.network import Network
+from .BUILTWITH.built_with import BuiltWith
