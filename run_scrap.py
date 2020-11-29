@@ -10,6 +10,7 @@ from modules import Scamwatcher, WebpageResolver
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
 from modules.WHO_IS.whois_api import WhoIs
 from modules.KNF.knf import KNFCheck
+from modules.NUMBER.number import NumberCheck
 import json
 
 MAIN_DATA = './modules/IOSCO/iosco.tsv'
@@ -26,7 +27,9 @@ def run_scrapper():
             t.set_postfix(company_name=company_name)
             try:
                 res = WebpageResolver(company_name).return_data()['webpage']
-            except (UnicodeError, requests.exceptions.InvalidURL, requests.exceptions.MissingSchema, AttributeError, requests.exceptions.ConnectionError):
+            except (UnicodeError, requests.exceptions.InvalidURL,
+                    requests.exceptions.MissingSchema, AttributeError,
+                    requests.exceptions.ConnectionError):
                 continue
 
             # if res is None:
@@ -77,8 +80,13 @@ def iterate_over_companies(source_fn):
 
 
 if __name__ == "__main__":
-    pass
-    run_scrapper()
+    # run_scrapper()
+    for num in [
+            '+48661512422', '787836812', '534533250', '+48661512422', '137803640',
+            '415650872', '617332697'
+    ]:
+        nc = NumberCheck('blackrock')
+        print(nc.return_data(number_string=num))
     # res = investigate_company("blackrock")
     # print(res)
     # iterate_over_companies("cache.tsv")

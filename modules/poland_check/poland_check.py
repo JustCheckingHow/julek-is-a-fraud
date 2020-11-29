@@ -1,6 +1,7 @@
 from modules import WebpageResolver
 from data_source import DataSource
 from modules import LanguageDetection
+from modules import ForexReview
 import pandas as pd
 from bs4 import BeautifulSoup
 import bs4
@@ -24,8 +25,13 @@ class PolandCheck(DataSource):
         for website in self.websites:
             if '.pl' in website:
                 return {"in_poland": True}
+        
+        is_polish_text = self.check_if_polish_text(self.websites)
+        is_on_forex = False
+        if ForexReview(self.company_name).return_data()['FOREX'] != '':
+            is_on_forex = True 
 
-        return {"in_poland": self.check_if_polish_text(self.websites)}
+        return {"in_poland": (is_polish_text or is_on_forex)}
 
     def check_if_polish_text(self, website):
         def tag_visible(element):
