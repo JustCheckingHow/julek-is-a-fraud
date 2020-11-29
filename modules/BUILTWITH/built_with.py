@@ -33,7 +33,7 @@ class BuiltWith(DataSource):
     def return_data(self):
         temp_cache = self.cache.check_cache(self.company_name)
         if temp_cache is not None:
-            return {"BuiltWith": temp_cache[1]}
+            return {"BuiltWith": temp_cache}
 
         out = []
         for link in self.resolv.return_data()['webpage']:
