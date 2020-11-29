@@ -34,6 +34,10 @@ class MiscWebData(DataSource):
         self.cache = Cache('modules/MISC_WEB_DATA/cache')
 
     def return_data(self, **kwargs) -> dict:
+        cache_check = self.cache.check_cache(self.company_name)
+        if cache_check is not None:
+            return {'MiscWebData': cache_check}
+
         try:
             links = WebpageResolver(self.company_name).return_data()['webpage']
         except IndexError:
@@ -65,5 +69,9 @@ class MiscWebData(DataSource):
                 #     print(extracted)
             except Exception as e:
                 print(e)
+
+        self.cache.append([
+            self.company_name, data
+        ])
 
         return {'MiscWebData': data}
