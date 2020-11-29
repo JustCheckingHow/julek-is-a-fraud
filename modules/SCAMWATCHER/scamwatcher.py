@@ -35,6 +35,12 @@ class Scamwatcher(DataSource):
             res = requests.get(page)
             found = "Oops! That page" not in res.text
 
+        if not found: 
+            page = Scamwatcher.PAGE_ROOT.format(self.company_name.lower().replace("ltd", "limited")).replace(" ", "-")
+            print(page)
+            res = requests.get(page)
+            found = "Oops! That page" not in res.text
+
         self.cache.loc[self.company_name, 'rank'] = found
         self.cache.to_csv(Scamwatcher.LOC+"cache.tsv", sep='\t')
         return {"Scamwatcher": bool(found)}

@@ -12,6 +12,7 @@ import hashlib
 import logging
 import csv
 import pickle
+import io
 
 
 path = "modules/IOSCO/iosco.tsv"
@@ -27,7 +28,11 @@ pickle_path = "modules/WEBPAGE_RESOLVE/out.pkl"
 with open(pickle_path, "rb") as f:
     SCRAPPED = pickle.load(f)
 
-SCRAPPED = {i: j for i, j in SCRAPPED}
+# Mapping na nazwy firm plus szukanie powiązań między firmami z tymi samymi URLami
+SCRAPPED = {i: j for i, j in SCRAPPED[1:]}
+# SCRAPPED = pd.read_csv(io.StringIO(SCRAPPED))
+# SCRAPPED = {}
+
 
 class WebpageResolver(DataSource):
     DOMAINS = ["biz.pl", "com", "org", "pl", "eu", "net", "co.uk", "hk"]
@@ -43,7 +48,6 @@ class WebpageResolver(DataSource):
 
         if len(data) > 0:
             self.company_name = data['name'].values[0]
-
         try:
             self.cache = pd.read_csv(WebpageResolver.CACHE_LOC,
                                      error_bad_lines=False,
