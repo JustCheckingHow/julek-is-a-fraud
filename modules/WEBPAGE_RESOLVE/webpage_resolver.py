@@ -59,7 +59,7 @@ class WebpageResolver(DataSource):
 
 
     @staticmethod
-    def get_html(webpage, stash=True):
+    def get_html(webpage, stash=True, only_cached=False):
         page_name = webpage.replace("http://", "")
         page_name = hashlib.md5(page_name.encode('utf-8')).hexdigest()
 
@@ -68,7 +68,7 @@ class WebpageResolver(DataSource):
         if "http" not in webpage:
             webpage = "http://"+webpage
 
-        if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)):
+        if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)) or only_cached:
             with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
         else:

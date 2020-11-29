@@ -12,11 +12,29 @@ import glob
 
 
 def telephone_normaliser(telpho):
+    #disable dates with / separator
+    # add more
+    date_regex = re.compile(r"(?:(19|20)\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01]))|(?:(0[1-9]|[12][0-9]|3[01])[- \/.](0[1-9]|1[012])[- \/.](19|20)\d\d)")
+    res = re.findall(date_regex, telpho)
+    if len(res) > 0:
+        return None
+    telpho = telpho.replace(" ", "")
     if len(telpho) < 7:
         return None
     else:
         return telpho
 
+def website_normaliser(url):
+    url = url.replace(" ", "")
+    try:
+        float(url)
+        return None
+    except:
+        pass
+    if len(url) < 4:
+        return None
+    else:
+        return url
 
 class RandomRGXExtractor:
     def __init__(self) -> None:
@@ -35,6 +53,7 @@ class RandomRGXExtractor:
                 r'(?:(?:(?:\+|00)?48)|(?:\(\+?48\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-68]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\d{7}'
             )
         }
+        #drop dates: (19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])
 
     def tag_visible(self, element):
         if element.parent.name in [
@@ -90,11 +109,15 @@ class RandomRGXExtractor:
             for r in results:
                 if 'phone' in rgx_name:
                     n = telephone_normaliser(r)
-                    if n:
+                    if n is not None:
                         res[rgx_name].append(n)
+                elif 'website' in rgx_name:
+                    w = website_normaliser(r)
+                    if w is not None:
+                        res[rgx_name].append(w)
                 else:
                     res[rgx_name].append(r)
-        print(res)
+        #print(res)
         return res
 
     def extract_wepages(self, webpage_dir: str) -> pd.DataFrame:
