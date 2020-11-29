@@ -53,7 +53,7 @@ class RandomRGXExtractor:
                 r'(?:(?:(?:\+|00)?48)|(?:\(\+?48\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-68]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\d{7}'
             )
         }
-        #drop dates: (19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])
+        # drop dates: (19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])
 
     def tag_visible(self, element):
         if element.parent.name in [
@@ -74,7 +74,7 @@ class RandomRGXExtractor:
                           df_fn: str,
                           savedir: str = "../webpages") -> None:
         """
-        Download all the websites first, using a IOSCO .tsv 
+        Download all the websites first, using a IOSCO .tsv
         The savename IS THE INDEX OF THE ENTRY from the .TSV!
         """
         df = pd.read_csv(df_fn,
@@ -117,7 +117,7 @@ class RandomRGXExtractor:
                         res[rgx_name].append(w)
                 else:
                     res[rgx_name].append(r)
-        #print(res)
+        # print(res)
         return res
 
     def extract_wepages(self, webpage_dir: str) -> pd.DataFrame:
