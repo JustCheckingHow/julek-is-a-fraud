@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from data_source import DataSource
-import json
+# import json
 import requests
 import csv
 
@@ -8,7 +8,7 @@ import csv
 class Cache:
     def __init__(self, filename):
         self.filename = filename
-        self.delim ='\t'
+        self.delim = '\t'
 
     def append(self, record):
         with open("{}.tsv".format(self.filename), 'a+') as f:
@@ -47,7 +47,7 @@ class NumberCheck(DataSource):
         number_query = f"{self.url}/{n_str}"
 
         cache_check = self.cache.check_cache(self.company_name)
-        if cache_check != None:
+        if cache_check is not None:
             nn = NumberInfo()
             nn.number = cache_check[1]
             nn.country = cache_check[2]
@@ -70,11 +70,11 @@ class NumberCheck(DataSource):
             danger = soup.find("span", {"id": "progress-bar-inner-text"}).text
         except AttributeError:
             danger = "None"
-        
+
         nbr_dat = NumberInfo(number_str,
                              country=country,
                              danger=danger.replace("%", ""))
-        
+
         self.cache.append([self.company_name, nbr_dat.number, nbr_dat.country, nbr_dat.danger])
         return nbr_dat
 
