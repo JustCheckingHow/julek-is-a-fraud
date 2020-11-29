@@ -65,7 +65,6 @@
             .attr("r", 20)
             .style("fill", "#39f")
 
-
         // Let's list the force we wanna apply on the network
         var simulation = d3.forceSimulation(data.nodes)                 // Force algorithm is applied to data.nodes
             .force("link", d3.forceLink()                               // This force provides links between nodes
@@ -88,3 +87,12 @@
                 .attr("cx", function (d) { return d.x+6; })
                 .attr("cy", function(d) { return d.y-6; })
         }
+
+
+        let my_graph = document.getElementById('my_graph');
+        let cells = my_graph.getElementsByTagName('g');
+
+        for (let cell of cells) {
+
+        }
+

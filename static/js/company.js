@@ -91,9 +91,11 @@ company_data["WhoIs"] = company_data["WhoIs"]
   .replace(/\[/gi, "\"\[")
   .replace(/\]/gi, "\]\"");
 
-let who_is_company_data = JSON.parse(company_data["WhoIs"]);
-for (const [key, value] of Object.entries(who_is_company_data)) {
-  addToTable(who_is_company_data, key);
+if(company_data["WhoIs"]) {
+  let who_is_company_data = JSON.parse(company_data["WhoIs"]);
+  for (const [key, value] of Object.entries(who_is_company_data)) {
+    addToTable(who_is_company_data, key);
+  }
 }
 
 if(company_data["KNF_whitelist"]) {
@@ -112,3 +114,5 @@ if(company_data["KNF_whitelist"]) {
 const whiteList = document.getElementById('white_list');
 whiteList.innerHTML = company_data['top_white'];
 
+const inPolandReasonValue = document.getElementById('in_poland_reason_value');
+if(company_data['Reason']) inPolandReasonValue.innerHTML = `because of ${company_data['Reason']}`;
