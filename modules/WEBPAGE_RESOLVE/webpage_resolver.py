@@ -237,5 +237,9 @@ class WebpageResolver(DataSource):
     def reverse_search_name(website: str) -> str:
         """
         pass company website, get company name
+        or return UNDEFINED
         """
-        return GLOB_CACHE.loc[GLOB_CACHE['rank'].str.contains(website)].index[0]
+        try:
+            return GLOB_CACHE.loc[GLOB_CACHE['rank'].str.contains(website)].index[0]
+        except:
+            return "UNDEFINED"
