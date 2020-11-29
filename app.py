@@ -6,6 +6,7 @@ from modules import Scamwatcher, WebpageResolver, PolandCheck, Network, BuiltWit
 from modules.WHO_IS.whois_api import WhoIs
 from modules.KNF.knf import KNFCheck
 from modules.FOREX.forex import ForexReview
+from modules.TFIDF.analyser import TFNeighbour
 
 import sys
 import json
@@ -72,7 +73,8 @@ def get_is_poland_threat():
 @app.route('/get_record', methods=['GET'])
 def get_rating():
     modules = [
-        AlexaRank, Scamwatcher, WhoIs, PolandCheck, KNFCheck, Network, BuiltWith
+        AlexaRank, Scamwatcher, WhoIs, PolandCheck, KNFCheck, Network,
+        BuiltWith, TFNeighbour
     ]
 
     args = request.args
