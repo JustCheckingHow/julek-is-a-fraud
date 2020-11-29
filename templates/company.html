@@ -10,7 +10,7 @@
 </head>
 
 <body class="c-app">
-
+<script src="https://d3js.org/d3.v4.js"></script>
 <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
 
   <div class="input-group" style="padding-top: 10px">
@@ -63,18 +63,17 @@
       </div>
     </div>
 
+  </div>
+
+
+    <div>
     <div class="card">
       <div class="card-body">
-        <!-- <i id="scam_watcher_icon" aria-hidden="true" style="font-size: 9vw;color: #39f;"></i> -->
-        <!-- <small id="knf_list_label" class="text-muted text-uppercase font-weight-bold" style="position: absolute;bottom: 50px; text-align: center; padding: 3%; top: 30%; font-size:1vw">Test</small> -->
-        <table class="table table-responsive-sm">
-          <tbody id="knf_list_table">
-          </tbody>
-        </table>
+        <small class="text-muted text-uppercase font-weight-bold" style="font-size:1vw">Built with</small>
+        <div id="built_with_card"></div>
       </div>
     </div>
   </div>
-
 
     <div>
       <div class="card overflow-hidden">
@@ -86,7 +85,8 @@
           </div>
           <div style="margin: auto;">
             <div id="in_poland_label" class="text-value text-info" style="font-size: 1.2vw;">Targeted to Polish clients:</div>
-            <div id="in_poland_value" class="text-muted text-uppercase font-weight-bold small" style="text-align: center; font-size: 1.2vw; height: 1.5vw;"></div>
+            <div id="in_poland_value" class="text-muted text-uppercase font-weight-bold small" style="font-size: 1.2vw; height: 1.5vw;"></div>
+            <div id="in_poland_reason_value" class="text-value text-info" style="font-size: 1.2vw;"></div>
           </div>
         </div>
       </div>
@@ -98,19 +98,18 @@
   <div style="width: 70%;margin-top: 160px;">
     <div style="display: flex; height: max-content;">
       <div class="card" style="margin-right: 20px; width: 50%; height: 100%;margin-bottom: 0;">
-        <div class="card-header">Trust rate</div>
+        <div class="card-header">Connections Network</div>
         <div class="card-body">
           <div class="c-chart-wrapper">
-            <canvas id="canvas-3"></canvas>
-            <div class="text-value-lg">89.9%</div>
+            <div id="my_graph"></div>
           </div>
         </div>
       </div>
 
       <div style="padding-right: 20px; width: 50%">
         <div class="card card-accent-info" style="height: 100%;">
-          <div class="card-header">White list</div>
-          <div class="card-body" style="font-size: 1.0vw; width: 32vw">
+          <div class="card-header">White List</div>
+          <div class="card-body" style="font-size: 1.0vw; width: 32vw; margin-right: 60px;">
             <a id="white_list"/>
           </div>
         </div>
@@ -128,6 +127,8 @@
       </div>
     </div>
 
+
+
 </div>
 
 
@@ -143,6 +144,8 @@
 <!-- Plugins and scripts required by this view-->
 <script src="/static/node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
 <script src="/static/node_modules/@coreui/utils/dist/coreui-utils.js"></script>
+<script src="/static/js/graph.js"></script>
 <script src="/static/js/company.js"></script>
+
 </body>
 </html>
