@@ -86,7 +86,7 @@ def get_rating():
         print(update, file=sys.stderr)
         res.update(update)
 
-    res = {i: str(j) for i, j in res.items()}
+    # res = {i: str(j) for i, j in res.items()}
     return jsonify(res)
 
 

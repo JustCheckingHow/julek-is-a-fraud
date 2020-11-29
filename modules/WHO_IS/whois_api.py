@@ -92,7 +92,7 @@ class WhoIs(DataSource):
                 res['tax_haven'] = country
 
         res['hidden_info'] = any(map(lambda x: 'whoisguard' in str(x).lower() or 'redacted' in str(x).lower(), text))
-        res['server_in_poland'] = 'poland' in text.lower()
+        res['server_in_poland'] = ('poland' in text.lower() or '.pl' in response['URL'].lower())
         return res
 
     def clear_dict(self, data):
