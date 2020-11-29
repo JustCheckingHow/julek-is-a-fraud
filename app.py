@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
-from modules import Scamwatcher, WebpageResolver, PolandCheck, Network
+from modules import Scamwatcher, WebpageResolver, PolandCheck, Network, BuiltWith
 from modules.WHO_IS.whois_api import WhoIs
 from modules.KNF.knf import KNFCheck
 from modules.FOREX.forex import ForexReview
@@ -72,7 +72,7 @@ def get_is_poland_threat():
 @app.route('/get_record', methods=['GET'])
 def get_rating():
     modules = [
-        AlexaRank, Scamwatcher, WhoIs, PolandCheck, KNFCheck, Network
+        AlexaRank, Scamwatcher, WhoIs, PolandCheck, KNFCheck, Network, BuiltWith
     ]
 
     args = request.args
