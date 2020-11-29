@@ -21,7 +21,7 @@ class Cache:
                 reader = csv.reader(f, delimiter=self.delim)
                 for row in reader:
                     if row[0] == key:
-                        return row[1]
+                        return row
                 return None
         except FileNotFoundError:
             return None
@@ -44,15 +44,10 @@ class NumberCheck(DataSource):
         print("check_number", number_str)
         n_str = number_str.replace("+", "").replace(" ", "").strip()
         number_query = f"{self.url}/{n_str}"
-        print(number_query)
-        # cache_check = self.cache.check_cache(self.company_name)
-        # if cache_check is not None:
-        #     nn = NumberInfo()
-        #     nn.number = cache_check[1]
-        #     nn.country = cache_check[2]
-        #     nn.danger = cache_check[3]
-
-        #     return nn
+        cache_check = self.cache.check_cache(self.company_name)
+        if cache_check is not None:
+            nn = NumberInfo(*cache_check[1:])
+            return nn
 
         webpage = requests.get(number_query,
                                headers={
