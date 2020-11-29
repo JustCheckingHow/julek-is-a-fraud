@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 from modules.ALEXA_RANK.alexa_rank import AlexaRank
-from modules import Scamwatcher, WebpageResolver
+from modules import Scamwatcher, WebpageResolver, PolandCheck
 from modules.WHO_IS.whois_api import WhoIs
 
 import json
@@ -48,12 +48,19 @@ def get_WebpageResolver():
 @app.route("/get_whois", methods=['GET'])
 def get_WhoIs():
     res = WhoIs(request.args['name'].lower()).return_data()
+    return jsonify(res)
+
+@app.route('/get_is_poland_threat', methods=['GET'])
+def get_is_poland_threat():
+    res = PolandCheck(request.args['name'].lower()).return_data()
     res = {i: str(j) for i, j in res.items()}
     return jsonify(res)
 
+
+
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher, WebpageResolver, WhoIs]
+    modules = [AlexaRank, Scamwatcher, WhoIs, PolandCheck]
 
     args = request.args
     name = args['name'].lower()
@@ -65,3 +72,6 @@ def get_rating():
 
     res = {i: str(j) for i, j in res.items()}
     return jsonify(res)
+
+
+    
