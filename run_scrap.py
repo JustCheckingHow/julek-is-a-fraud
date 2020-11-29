@@ -92,6 +92,9 @@ if __name__ == "__main__":
     index_set = {int(k): v for k, v in index_set.items()}
     inverse_indx = {v: k for k, v in index_set.items()}
 
-    for company in inverse_indx:
-        tf = TFNeighbour(company)
-        print(tf.return_data())
+    print(index_set)
+    tf = TFNeighbour("RACEOPTION")
+    print(tf.return_data())
+    # for company in inverse_indx:
+    #     tf = TFNeighbour(company)
+    #     print(tf.return_data())
