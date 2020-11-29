@@ -38,8 +38,9 @@ class TFNeighbour(DataSource):
         print(indx)
         for idx, score in zip(indx, to_ret):
             try:
-                companies.append(index_set[idx])
-                to_ret_final.append(score)
+                if score > 0:
+                    companies.append(index_set[idx])
+                    to_ret_final.append(score)
             except:
                 pass
         return {"nearest_neighbours": companies, "scores": to_ret_final}
