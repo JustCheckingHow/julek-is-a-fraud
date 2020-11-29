@@ -2,7 +2,6 @@ from data_source import DataSource
 from modules.RGX_GAME.random_page_rgx import RandomRGXExtractor
 from modules.WEBPAGE_RESOLVE.webpage_resolver import WebpageResolver
 from modules.NUMBER.number import NumberCheck
-import time
 import csv
 
 
@@ -61,12 +60,10 @@ class MiscWebData(DataSource):
 
                 data += [dict(extracted)]
 
-                # if len(extracted['phone-polish']) > 0:
-                #     for phone in extracted['phone-polish']:
-                #         nc = NumberCheck(self.company_name)
-                #         print(nc.return_data(number_string=phone))
-                #         time.sleep(2)
-                #     print(extracted)
+                if len(extracted['phone-polish']) > 0:
+                    for phone in extracted['phone-polish']:
+                        nc = NumberCheck(self.company_name)
+                        print(nc.return_data(number_string=phone))
             except Exception as e:
                 print(e)
 
