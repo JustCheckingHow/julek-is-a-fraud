@@ -84,6 +84,7 @@ class WebpageResolver(DataSource):
 
     @staticmethod
     def _find_in_redirect(url, stash=False):
+        url = url.lstrip(":").rstrip("/")
         page = WebpageResolver.get_html(url, stash=stash).lower()
         extractor = RandomRGXExtractor()
         data = extractor.parse_webpage(page)
@@ -171,7 +172,7 @@ class WebpageResolver(DataSource):
         if main_domain is None:
             return {'webpage': None, "Company Name": self.company_name}
 
-        results = main_domain
+        results = list(set(main_domain))
         # ending = [i for i in WebpageResolver.DOMAINS if f".{i}" in main_domain or f"{i}." in main_domain]
         # results = WebpageResolver.find_alternative_domains(main_domain, "com")
 
