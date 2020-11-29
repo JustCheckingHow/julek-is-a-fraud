@@ -23,7 +23,7 @@ def not_found(e):
 @app.route('/')
 @app.route('/index.html')
 def hello_world():
-    return render_template('index.html')
+    return render_template('home.html')
 
 
 @app.route('/home.html')
@@ -93,5 +93,5 @@ def get_rating():
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     res = Network('').find_company(request.args['name'].lower())
-    res = {i: str(j) for i, j in res.items()}
+    #res = {i: str(j) for i, j in res.items()}
     return jsonify(res)

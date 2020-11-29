@@ -2,11 +2,12 @@ function onSearch() {
   let input = document.getElementById('search_input');
   if(input.value) {
     localStorage.setItem('search', input.value);
-    getResult(input.value);
+    //getResult(input.value);
   }
 }
 
 function getResult(value) {
+  //onSearch()
   let loader = document.getElementById('loader');
   loader.style.display = 'block';
 
@@ -24,10 +25,46 @@ function getResult(value) {
 
 }
 
+function getSuggestions(value) {
+  let loader = document.getElementById('loader');
+  loader.style.display = 'block';
+  onSearch();
+
+  $.ajax({
+    url: `http://127.0.0.1:5000/autocomplete?name=${localStorage.getItem('search')}`,
+    type: "GET",
+    success: (response) => {
+      loader.style.display = 'none';
+      console.log(response);
+      displayLists(response)//JSON.parse("{" + response.replace('"', '') + "}"));
+    },
+    error: function(result) {
+      console.log('error');
+    }
+  });
+
+}
+
+function displayLists(data)
+{
+    let list = document.getElementById('search_list');
+    list.innerHTML = '';
+    //data['matching'].forEach(el => displayList(el))
+    console.log(data['matching'])
+    temp = data['matching']
+    //console.log(temp)
+    for (var i=0;i<temp.length;i++)
+    {
+        //displayList(temp[i]);
+        getResult(temp[i])
+        console.log(temp[i]);
+    }
+}
+
 function displayList(data) {
   let result = [data];
   let list = document.getElementById('search_list');
-  list.innerHTML = '';
+  //list.innerHTML = ;
 
   result.map(el => {
     let btn = document.createElement("BUTTON");
