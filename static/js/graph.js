@@ -12,42 +12,22 @@
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    let mock = {
+            'nearest_neigbours': ['docA', 'docB', 'docC', 'docD', 'docE'],
+            'scores': [0.22, 0.9, 0.8, 0.6, 0.5]
+        }
 
-    let data = {
-  "nodes": [
-    {
-      "id": 1,
-      "name": "A"
-    },
-    {
-      "id": 2,
-      "name": "B"
-    },
-    {
-      "id": 3,
-      "name": "C"
-    }
-  ],
-  "links": [
+    let data = {"nodes": [{id: 1, name: 'main'}], "links": []}
 
-    {
-      "source": 1,
-      "target": 2,
-        "score": 10
-    },
-    {
-      "source": 1,
-      "target": 3,
-        "score": 20
-    },
-    {
-      "source": 1,
-      "target": 2,
-        "score": 30
-    }
-  ]
-}
+      mock['nearest_neigbours'].map((neigbour, index) => {
+          data['nodes'].push({id: index+2, name: neigbour})
+      });
 
+    mock['scores'].map((score, index) => {
+        data['links'].push({"source": 1, "target": index+2, "score": score})
+    });
+
+    console.log(data);
 
         // Initialize the links
         var link = svg
@@ -56,7 +36,7 @@
             .enter()
             .append("line")
             .style("stroke", "#aaa")
-            .style("stroke-width", function(d) {return `${d.score/10}px`})
+            .style("stroke-width", function(d) {return `${d.score*2}px`})
 
    var tooltip = d3.select("body")
     .append("div")
