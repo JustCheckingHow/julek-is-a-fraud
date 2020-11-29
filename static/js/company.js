@@ -68,19 +68,19 @@ alexaProgressbar.style.width = `${progress.toString()}%`;
 alexaBoxRate.innerHTML = company_data['AlexaRank'];
 
 if (parseInt(company_data['AlexaRank']) === 0) {
-  alexaBoxState.innerHTML = "high risk";
+  alexaBoxState.innerHTML = "Very high traffic";
 }
 else if (parseInt(company_data['AlexaRank']) === 1) {
-  alexaBoxState.innerHTML = "moderate risk";
+  alexaBoxState.innerHTML = "High traffic";
 }
 else if (parseInt(company_data['AlexaRank']) === 2) {
-  alexaBoxState.innerHTML = "low risk";
+  alexaBoxState.innerHTML = "Moderate traffic";
 }
 else if (parseInt(company_data['AlexaRank']) === 3) {
-  alexaBoxState.innerHTML = "very low risk";
+  alexaBoxState.innerHTML = "Low traffic";
 }
 else if (parseInt(company_data['AlexaRank']) === 4) {
-  alexaBoxState.innerHTML = "not indexed risk";
+  alexaBoxState.innerHTML = "Not indexed by Alexa";
 }
 
 const scamWatcherIcon = document.getElementById('scam_watcher_icon');
