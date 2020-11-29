@@ -55,9 +55,9 @@ class TFNeighbour(DataSource):
     def __calculate_dot_product(self):
         try:
             company_index = int(inverse_indx[self.company_name])
-        except KeyError:
+            vector = X_PCA[company_index]
+        except (KeyError, IndexError):
             return {"nearest_neighbours": [], "scores": []}
-        vector = X_PCA[company_index]
         mat = self.__compute_sim_matrix(vector, X_PCA)
 
         return self.__get_n_max(mat, N=40)

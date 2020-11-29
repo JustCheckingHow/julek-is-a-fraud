@@ -86,10 +86,12 @@ if __name__ == "__main__":
     #     nc = NumberCheck('blackrock')
     #     print(nc.return_data(number_string=num))
 
-    tf = TFNeighbour('WALTER INTERNATIONAL')
-    print(tf.return_data())
-    # wr = WebpageResolver.reverse_search_name("https://web.coopermarkets.com/")
-    # print(wr)
-    # res = investigate_company("blackrock")
-    # print(res)
-    # iterate_over_companies("cache.tsv")
+
+    INDEX_LOC = "modules/TFIDF/pca_index.json"
+    index_set = json.load(open(INDEX_LOC, 'r'))
+    index_set = {int(k): v for k, v in index_set.items()}
+    inverse_indx = {v: k for k, v in index_set.items()}
+
+    for company in inverse_indx:
+        tf = TFNeighbour(company)
+        print(tf.return_data())
