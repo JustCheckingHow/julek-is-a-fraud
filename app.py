@@ -48,7 +48,6 @@ def get_WebpageResolver():
 @app.route("/get_whois", methods=['GET'])
 def get_WhoIs():
     res = WhoIs(request.args['name'].lower()).return_data()
-    res = {i: str(j) for i, j in res.items()}
     return jsonify(res)
 
 @app.route('/get_record', methods=['GET'])

@@ -21,7 +21,7 @@ def run_scrapper():
                      quotechar="\'",
                      error_bad_lines=False,
                      quoting=csv.QUOTE_NONE)
-    with tqdm(df['name'].iloc[667+753:]) as t:
+    with tqdm(df['name'].iloc[667+753+4099:]) as t:
         for company_name in t:
             t.set_postfix(company_name=company_name)
             try:
