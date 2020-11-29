@@ -24,14 +24,16 @@ class PolandCheck(DataSource):
     def return_data(self, **kwargs) -> dict:
         for website in self.websites:
             if '.pl' in website:
-                return {"PolandCheck": True}
+                return {"PolandCheck": True, "Reason": ".pl"}
         
         is_polish_text = self.check_if_polish_text(self.websites)
-        is_on_forex = False
-        if ForexReview(self.company_name).return_data()['FOREX'] != '':
-            is_on_forex = True 
+        if is_polish_text == True:
+            return {"PolandCheck": True, "Reason": "text"}
 
-        return {"PolandCheck": (is_polish_text or is_on_forex)}
+        if ForexReview(self.company_name).return_data()['FOREX'] != '':
+            return {"PolandCheck": True, "Reason": "Forex"}
+
+        return {"PolandCheck": False}
 
     def check_if_polish_text(self, website):
         def tag_visible(element):
@@ -52,7 +54,7 @@ class PolandCheck(DataSource):
                 text = text_from_html(WebpageResolver.get_html(website))
                 ld = LanguageDetection()
                 langs = ld.return_data(text=text)
-                print(langs, website)
+                #print(langs, website)
             except:
                 continue
             if 'pl' in langs and langs['pl'] > 0.25:
@@ -68,7 +70,11 @@ if __name__ == "__main__":
         for row in reader:
             data.append(row[0])
 
+    print("LEN:", len(data))
+
     for el in data:
         poland_check = PolandCheck(el)
         out = poland_check.return_data()
+        if out['PolandCheck'] == True:
+            print(el, out['Reason'])
             
