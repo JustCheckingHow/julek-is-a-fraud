@@ -38,8 +38,10 @@ class WhoIs(DataSource):
         super().__init__(None)
         self.tax_havens = TaxHeaven().return_data()['tax_heaven']
         self.cache = Cache('modules/WHO_IS/cache')
+        resolv = WebpageResolver(company_name)
+        self.company_name = resolv.company_name
         try:
-            res = WebpageResolver(company_name).return_data()['webpage']
+            res = resolv.return_data()['webpage']
             self.webpages = list(set(res))
         except IndexError as e:
             print("WEBPAGE NOT FOUND")
@@ -70,7 +72,10 @@ class WhoIs(DataSource):
 
                 except Exception as e:
                     print("WHOIS ERROR:", e, file=sys.stderr)
-        return {'WhoIs': out_arr}
+
+        result = {'WhoIs': out_arr}
+        result['CompanyName'] = self.company_name
+        return result
     
     def get_whois(self, response):
         try:
