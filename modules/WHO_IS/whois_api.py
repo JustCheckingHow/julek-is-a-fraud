@@ -93,7 +93,6 @@ class WhoIs(DataSource):
 
         res['hidden_info'] = any(map(lambda x: 'whoisguard' in str(x).lower() or 'redacted' in str(x).lower(), text))
         res['server_in_poland'] = 'poland' in text.lower()
-        print(res)
         return res
 
     def clear_dict(self, data):
@@ -102,7 +101,10 @@ class WhoIs(DataSource):
         res['tax_haven'] = data['tax_haven']
         res['hidden_info'] = data['hidden_info']
         res['server_in_poland'] = data['server_in_poland']
-        res['creation_date'] = data['creation_date']
+        try:
+            res['creation_date'] = data['creation_date']
+        except KeyError:
+            pass
         return res
 
 if __name__ == "__main__":

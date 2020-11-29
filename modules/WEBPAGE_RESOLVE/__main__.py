@@ -1,6 +1,6 @@
 from .webpage_resolver import WebpageResolver
 
-test = WebpageResolver("Spark")
+test = WebpageResolver("European lnvestment Systems")
 res = test.return_data()
 print(res)
 for i in res:
