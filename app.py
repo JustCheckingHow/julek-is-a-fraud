@@ -52,7 +52,7 @@ def get_WhoIs():
 
 @app.route('/get_record', methods=['GET'])
 def get_rating():
-    modules = [AlexaRank, Scamwatcher, WebpageResolver, WhoIs]
+    modules = [AlexaRank, Scamwatcher, WhoIs]
 
     args = request.args
     name = args['name'].lower()

@@ -11,6 +11,8 @@ from modules.RGX_GAME.random_page_rgx import RandomRGXExtractor
 import hashlib
 import logging
 import csv
+import pickle
+
 
 path = "modules/IOSCO/iosco.tsv"
 DATA = pd.read_csv(path,
@@ -21,6 +23,12 @@ DATA = pd.read_csv(path,
 DATA['name'] = DATA['name'].astype(str)
 
 
+pickle_path = "modules/WEBPAGE_RESOLVE/out.pkl"
+with open(pickle_path, "rb") as f:
+    SCRAPPED = pickle.load(f)
+
+SCRAPPED = {i: j for i, j in SCRAPPED}
+
 class WebpageResolver(DataSource):
     DOMAINS = ["biz.pl", "com", "org", "pl", "eu", "net", "co.uk", "hk"]
     CACHE_LOC = "modules/WEBPAGE_RESOLVE/cache.tsv"
@@ -29,12 +37,7 @@ class WebpageResolver(DataSource):
     def __init__(self, company_name):
         super().__init__(company_name)
         requests.adapters.DEFAULT_RETRIES = 1
-        # signal.signal(signal.SIGALRM, None)
-        # signal.alarm(2)
-        # path = "modules/IOSCO/iosco.tsv"
-        # self.data = pd.read_csv(
-        #     path, sep='\t', error_bad_lines=False, escapechar='\\')
-        # print(self.data)
+        
         filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
         data = DATA[filt]
 
@@ -50,19 +53,29 @@ class WebpageResolver(DataSource):
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
 
+
     @staticmethod
     def get_html(webpage, stash=True):
         page_name = webpage.replace("http://", "")
         page_name = hashlib.md5(page_name.encode('utf-8')).hexdigest()
 
         all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC + "*")
+
+        if "http" not in webpage:
+            webpage = "http://"+webpage
+
         if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)):
             with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
+        else:
+            try:
+                return SCRAPPED[webpage]
+            except KeyError:
+                pass
 
         try:
             page = requests.get(webpage)
-        except requests.exceptions.SSLError:
+        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
             return ''
         if stash:
             with open(WebpageResolver.PAGE_CACHE_LOC + page_name,

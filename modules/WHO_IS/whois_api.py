@@ -10,6 +10,7 @@ import re
 from collections import defaultdict
 from pprint import pprint
 
+
 class Cache:
     def __init__(self, filename):
         self.filename = filename
@@ -47,7 +48,7 @@ class WhoIs(DataSource):
     def return_data(self, **kwargs) -> dict:
         out_arr = []
         for uri_with_http in self.webpages:
-            uri = uri_with_http.replace('http://', '').replace('https://', '')
+            uri = uri_with_http.replace('http://', '').replace('https://', '').replace("www.", "")
             if uri[-1] == "/" or uri[-1] == '.':
                 uri = uri[:-1]
             # cache_resp = self.cache.check_cache(uri)
@@ -85,7 +86,7 @@ class WhoIs(DataSource):
             if country.lower() in text.lower():
                 res['tax_haven'] = country
 
-        res['hidden_info'] = any(map(lambda x: 'whoisguard' in str(x).lower(), text))
+        res['hidden_info'] = any(map(lambda x: 'whoisguard' in str(x).lower() or 'redacted' in str(x).lower(), text))
         res['server_in_poland'] = 'poland' in text.lower()
         print(res)
         return res
@@ -103,4 +104,3 @@ if __name__ == "__main__":
     who = WhoIs("atlas")
     data = who.return_data()
     print(data)
-

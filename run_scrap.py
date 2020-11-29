@@ -80,13 +80,13 @@ def iterate_over_companies(source_fn):
 
 
 if __name__ == "__main__":
-    # run_scrapper()
-    for num in [
-            '+48661512422', '787836812', '534533250', '+48661512422', '137803640',
-            '415650872', '617332697'
-    ]:
-        nc = NumberCheck('blackrock')
-        print(nc.return_data(number_string=num))
+    run_scrapper()
+    # for num in [
+    #         '+48661512422', '787836812', '534533250', '+48661512422', '137803640',
+    #         '415650872', '617332697'
+    # ]:
+    #     nc = NumberCheck('blackrock')
+    #     print(nc.return_data(number_string=num))
     # res = investigate_company("blackrock")
     # print(res)
     # iterate_over_companies("cache.tsv")
