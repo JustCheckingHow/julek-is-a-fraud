@@ -1,3 +1,4 @@
+from numpy.lib.function_base import blackman
 from data_source import DataSource
 import Levenshtein as lv
 
@@ -12,7 +13,7 @@ with open(KNF_BLACKLIST, 'r', encoding='utf-8') as f:
 
 SUFFIXES = [
     " sp. z o.o.", " sp. k.", " sa", " ltd", " s.l.", " s.c.", " llc",
-    " sp. z o. o."
+    " sp. z o. o.", " s.a"
 ]
 
 
@@ -52,6 +53,22 @@ class KNFCheck(DataSource):
         l1, l2 = zip(*sorted(zip(dist, knf_list), reverse=False))
         return l1, l2
 
+    def __calculate_KNF_score(self, whitelist, blacklist):
+        cclen = len(self.cleaned_company_name)
+        whitescore, blackscore = 0.0, 0.0
+        for score, whitelist_dom in whitelist:
+            wlen = len(whitelist_dom)
+            whitescore += score / (wlen + cclen)
+        for score, blacklist_dom in blacklist:
+            blen = len(blacklist_dom)
+            blackscore += score / (blen + cclen)
+        return {
+            "KNF_whitelist_score": whitescore,
+            "KNF_blacklist_score": blackscore,
+            'top_white': [x[1] for x in whitelist],
+            'top': [x[1] for x in blacklist]
+        }
+
     def return_data(self, **kwargs) -> dict:
         top_matches_bl = self.naive_search(knf_blacklist_end)
         top_matches_wl = self.naive_search(knf_whitelist_end)
@@ -66,10 +83,8 @@ class KNFCheck(DataSource):
         else:
             white_list_most_sim = []
 
-        return {
-            'KNF_whitelist': white_list_most_sim,
-            'KNF_blacklist': black_list_most_sim
-        }
+        return self.__calculate_KNF_score(white_list_most_sim,
+                                          black_list_most_sim)
 
 
 if __name__ == "__main__":
