@@ -71,7 +71,7 @@ def get_is_poland_threat():
 @app.route('/get_record', methods=['GET'])
 def get_rating():
     modules = [
-        AlexaRank, Scamwatcher, WhoIs, PolandCheck, ForexReview, KNFCheck
+        AlexaRank, Scamwatcher, WhoIs, PolandCheck, KNFCheck
     ]
 
     args = request.args
