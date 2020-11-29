@@ -40,8 +40,7 @@ let company_data = JSON.parse(localStorage.getItem('company'));
 company_title.innerHTML = company_data.name;
 // 
 // LOG THE SHIT
-// 
-console.log(company_data)
+//
 
 const doughnutChart = new Chart(document.getElementById('canvas-3'), {
   type: 'doughnut',
@@ -90,38 +89,36 @@ scamWatcherLabel.innerHTML = company_data["Scamwatcher"] === 'True' ? "Found on 
 scamWatcherIcon.className = company_data["Scamwatcher"] === 'True' ? 'fa fa-exclamation-triangle' : 'fa fa-check-circle';
 
 const inPolandValue = document.getElementById('in_poland_value');
-console.log(inPolandValue)
-if (!company_data["in_poland"]) {
+if (!company_data["PolandCheck"]) {
   inPolandValue.innerHTML = '-'
 }
 else {
-  inPolandValue.innerHTML = company_data["in_poland"] === 'True' ? "YES" : "NO";
+  inPolandValue.innerHTML = company_data["PolandCheck"] === 'True' ? "YES" : "NO";
 }
 
 const companyDetailsTable = document.getElementById('company_details_table');
 
-
-addToTable(company_data, "Company Name");
-addToTable(company_data, "webpage");
-
-
 company_data["WhoIs"] = company_data["WhoIs"]
   .slice(1, -1).replace(/'/gi, "\"")
   .replace(/False/gi, "\"False\"")
-  .replace(/True/gi, "\"True\"");
+  .replace(/True/gi, "\"True\"")
+  .replace(/\[/gi, "\"\[")
+  .replace(/\]/gi, "\]\"");
 
 let who_is_company_data = JSON.parse(company_data["WhoIs"]);
 for (const [key, value] of Object.entries(who_is_company_data)) {
   addToTable(who_is_company_data, key);
 }
 
+if(company_data["KNF_whitelist"]) {
+  let knf_whitelist_table = JSON.parse(company_data["KNF_whitelist"]).slice(1, -1).replace(/'/gi, "\"")
+      .replace(/False/gi, "\"False\"")
+      .replace(/True/gi, "\"True\"");
 
-let knf_whitelist_table = JSON.parse(company_data["KNF_whitelist"]).slice(1, -1).replace(/'/gi, "\"")
-  .replace(/False/gi, "\"False\"")
-  .replace(/True/gi, "\"True\"");
-
-const knfListTable = document.getElementById('knf_list_table');
-for (const [key, value] of Object.entries(knf_whitelist)) {
-  let tr = addToTableGen(knf_whitelist, key);
-  knf_whitelist_table.appendChild(tr);
+  const knfListTable = document.getElementById('knf_list_table');
+  for (const [key, value] of Object.entries(knf_whitelist)) {
+    let tr = addToTableGen(knf_whitelist, key);
+    knf_whitelist_table.appendChild(tr);
+  }
 }
+
