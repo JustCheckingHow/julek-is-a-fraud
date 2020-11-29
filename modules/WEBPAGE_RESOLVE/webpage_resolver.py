@@ -14,7 +14,6 @@ import csv
 import pickle
 import io
 
-
 path = "modules/IOSCO/iosco.tsv"
 DATA = pd.read_csv(path,
                    sep='\t',
@@ -22,7 +21,6 @@ DATA = pd.read_csv(path,
                    quoting=csv.QUOTE_NONE,
                    error_bad_lines=False)
 DATA['name'] = DATA['name'].astype(str)
-
 
 pickle_path = "modules/WEBPAGE_RESOLVE/out.pkl"
 with open(pickle_path, "rb") as f:
@@ -33,6 +31,11 @@ SCRAPPED = {i: j for i, j in SCRAPPED[1:]}
 # SCRAPPED = pd.read_csv(io.StringIO(SCRAPPED))
 # SCRAPPED = {}
 
+GLOB_CACHE = pd.read_csv("modules/WEBPAGE_RESOLVE/cache.tsv",
+                         error_bad_lines=False,
+                         sep='\t',
+                         index_col='company')
+
 
 class WebpageResolver(DataSource):
     DOMAINS = ["biz.pl", "com", "org", "pl", "eu", "net", "co.uk", "hk"]
@@ -42,8 +45,9 @@ class WebpageResolver(DataSource):
     def __init__(self, company_name):
         super().__init__(company_name)
         requests.adapters.DEFAULT_RETRIES = 1
-        
-        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
+
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower()
+                                  if not pd.isna(x) else False)
         data = DATA[filt]
 
         if len(data) > 0:
@@ -57,7 +61,6 @@ class WebpageResolver(DataSource):
             self.cache = pd.DataFrame(columns=['company', 'rank'])
             self.cache = self.cache.set_index('company')
 
-
     @staticmethod
     def get_html(webpage, stash=True, only_cached=False):
         page_name = webpage.replace("http://", "")
@@ -66,9 +69,10 @@ class WebpageResolver(DataSource):
         all_pages = glob.glob(WebpageResolver.PAGE_CACHE_LOC + "*")
 
         if "http" not in webpage:
-            webpage = "http://"+webpage
+            webpage = "http://" + webpage
 
-        if any(map(lambda x: page_name == os.path.split(x)[-1], all_pages)) or only_cached:
+        if any(map(lambda x: page_name == os.path.split(x)[-1],
+                   all_pages)) or only_cached:
             with open(WebpageResolver.PAGE_CACHE_LOC + page_name, "r") as f:
                 return f.read()
         else:
@@ -79,7 +83,8 @@ class WebpageResolver(DataSource):
 
         try:
             page = requests.get(webpage)
-        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
+        except (requests.exceptions.SSLError,
+                requests.exceptions.ConnectionError):
             return ''
         if stash:
             with open(WebpageResolver.PAGE_CACHE_LOC + page_name,
@@ -114,13 +119,13 @@ class WebpageResolver(DataSource):
             if '.gov' in url or 'finma.ch' in url:
                 continue
             if 'http' not in url:
-                url = 'http://'+url
+                url = 'http://' + url
             # if WebpageResolver.check_exists(url):
             res.append(url)
             if ".co.uk" in url:
                 res.append(url.replace(".co.uk", ".pl"))
             else:
-                res.append('.'.join(url.split(".")[:-1])+".pl")
+                res.append('.'.join(url.split(".")[:-1]) + ".pl")
         return res
 
     @staticmethod
@@ -143,7 +148,7 @@ class WebpageResolver(DataSource):
 
         # return None
         name = name.lower()
-        res = [name+".pl"]
+        res = [name + ".pl"]
         main_domain = name.replace(" ", "-")
         main_domain += ".pl"
         res.append(main_domain)
@@ -153,19 +158,21 @@ class WebpageResolver(DataSource):
         return res
 
     def find_main_domain(self, company_name):
-        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower()
+                                  if not pd.isna(x) else False)
         data = DATA[filt]
 
         res = []
         if len(data) > 0:
             self.company_name = data['name'].values[0]
-            if 'www' in data['name'].values[0] or 'http' in data['name'].values[0]:
+            if 'www' in data['name'].values[0] or 'http' in data[
+                    'name'].values[0]:
                 url = data['name'].values[0]
                 res.append(url)
                 if ".co.uk" in url:
                     res.append(url.replace(".co.uk", ".pl"))
                 else:
-                    res.append('.'.join(url.split(".")[:-1])+".pl")
+                    res.append('.'.join(url.split(".")[:-1]) + ".pl")
             else:
                 if 'knf.gov.pl' in data['redirect'].values[0]:
                     return None
@@ -225,3 +232,10 @@ class WebpageResolver(DataSource):
             return None
         except requests.exceptions.TooManyRedirects:
             return None
+
+    @staticmethod
+    def reverse_search_name(website: str) -> str:
+        """
+        pass company website, get company name
+        """
+        return GLOB_CACHE.loc[GLOB_CACHE['rank'].str.contains(website)].index[0]
