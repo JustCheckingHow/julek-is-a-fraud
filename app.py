@@ -87,6 +87,9 @@ def get_rating():
         res.update(update)
 
     # res = {i: str(j) for i, j in res.items()}
+    for item in res['WhoIs']:
+        res['PolandCheck'] += item['server_in_poland']
+    res['PolandCheck'] = str(bool(res['PolandCheck']))
     return jsonify(res)
 
 
