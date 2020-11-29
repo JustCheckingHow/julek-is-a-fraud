@@ -46,8 +46,7 @@ class WebpageResolver(DataSource):
         super().__init__(company_name)
         requests.adapters.DEFAULT_RETRIES = 1
 
-        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower()
-                                  if not pd.isna(x) else False)
+        filt = DATA['name'].apply(lambda x: company_name.lower() in x.lower() if not pd.isna(x) else False)
         data = DATA[filt]
 
         if len(data) > 0:
