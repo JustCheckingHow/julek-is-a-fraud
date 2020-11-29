@@ -4,6 +4,7 @@ import json
 import requests
 import csv
 
+
 class Cache:
     def __init__(self, filename):
         self.filename = filename
@@ -24,7 +25,6 @@ class Cache:
                 return None
         except FileNotFoundError:
             return None
-
 
 
 class NumberInfo:
