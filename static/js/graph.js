@@ -1,4 +1,7 @@
-   // set the dimensions and margins of the graph
+
+let company_data = JSON.parse(localStorage.getItem('company'));
+
+// set the dimensions and margins of the graph
     var margin = {top: 10, right: 30, bottom: 30, left: 40},
         width = 200 - margin.top - margin.bottom;
         height = 200 - margin.top - margin.bottom;
@@ -19,6 +22,7 @@
 
     let data = {"nodes": [{id: 1, name: 'main'}], "links": []}
 
+    
       mock['nearest_neigbours'].map((neigbour, index) => {
           data['nodes'].push({id: index+2, name: neigbour})
       });
