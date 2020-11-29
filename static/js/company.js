@@ -43,20 +43,6 @@ company_title.innerHTML = company_data.name;
 // LOG THE SHIT
 //
 
-const doughnutChart = new Chart(document.getElementById('canvas-3'), {
-  type: 'doughnut',
-  data: {
-    datasets: [{
-      data: [70, 30],
-      backgroundColor: ['#FF6384', 'transparent'],
-      hoverBackgroundColor: ['#FF6384', 'transparent']
-    }]
-  },
-  options: {
-    responsive: true
-  }
-});
-
 const alexaBoxRate = document.getElementById('alexa_box_rate');
 const alexaBoxState = document.getElementById('alexa_box_state');
 const alexaProgressbar = document.getElementById('alexa_progressbar');

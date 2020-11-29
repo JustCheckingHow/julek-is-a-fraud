@@ -10,7 +10,7 @@
 </head>
 
 <body class="c-app">
-
+<script src="https://d3js.org/d3.v4.js"></script>
 <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
 
   <div class="input-group" style="padding-top: 10px">
@@ -99,18 +99,17 @@
   <div style="width: 70%;margin-top: 160px;">
     <div style="display: flex; height: max-content;">
       <div class="card" style="margin-right: 20px; width: 50%; height: 100%;margin-bottom: 0;">
-        <div class="card-header">Trust rate</div>
+        <div class="card-header">Connections Network</div>
         <div class="card-body">
           <div class="c-chart-wrapper">
-            <canvas id="canvas-3"></canvas>
-            <div class="text-value-lg">89.9%</div>
+            <div id="my_graph"></div>
           </div>
         </div>
       </div>
 
       <div style="padding-right: 20px; width: 50%">
         <div class="card card-accent-info" style="height: 100%;">
-          <div class="card-header">White list</div>
+          <div class="card-header">White List</div>
           <div class="card-body" style="font-size: 1.0vw; width: 32vw">
             <a id="white_list"/>
           </div>
@@ -144,6 +143,8 @@
 <!-- Plugins and scripts required by this view-->
 <script src="/static/node_modules/@coreui/chartjs/dist/js/coreui-chartjs.bundle.js"></script>
 <script src="/static/node_modules/@coreui/utils/dist/coreui-utils.js"></script>
+<script src="/static/js/graph.js"></script>
 <script src="/static/js/company.js"></script>
+
 </body>
 </html>
