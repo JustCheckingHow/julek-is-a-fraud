@@ -116,3 +116,6 @@ whiteList.innerHTML = company_data['top_white'];
 
 const inPolandReasonValue = document.getElementById('in_poland_reason_value');
 if(company_data['Reason']) inPolandReasonValue.innerHTML = `because of ${company_data['Reason']}`;
+
+const builtWithCard = document.getElementById('built_with_card');
+builtWithCard.innerHTML = company_data['BuiltWith']

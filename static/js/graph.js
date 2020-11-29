@@ -32,15 +32,18 @@
 
     {
       "source": 1,
-      "target": 2
+      "target": 2,
+        "score": 10
     },
     {
       "source": 1,
-      "target": 3
+      "target": 3,
+        "score": 20
     },
     {
       "source": 1,
-      "target": 2
+      "target": 2,
+        "score": 30
     }
   ]
 }
@@ -53,6 +56,16 @@
             .enter()
             .append("line")
             .style("stroke", "#aaa")
+            .style("stroke-width", function(d) {return `${d.score/10}px`})
+
+   var tooltip = d3.select("body")
+    .append("div")
+    .style("position", "absolute")
+    .style("z-index", "10")
+    .style("visibility", "hidden")
+    .style("background", "#000")
+    .style("color", "white")
+    .text("a simple tooltip");
 
         // Initialize the nodes
         var node = svg
@@ -62,8 +75,11 @@
             .append("g")
             .attr("transform", function(d){return "translate("+d.x+",80)"})
             .append("circle")
-            .attr("r", 20)
+            .attr("r", 10)
             .style("fill", "#39f")
+            .on("mouseover", function(d){tooltip.text(d.name); return tooltip.style("visibility", "visible");})
+      .on("mousemove", function(){return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");})
+      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
         // Let's list the force we wanna apply on the network
         var simulation = d3.forceSimulation(data.nodes)                 // Force algorithm is applied to data.nodes
@@ -71,7 +87,7 @@
                 .id(function(d) { return d.id; })                     // This provide  the id of a node
                 .links(data.links)                                    // and this the list of links
             )
-            .force("charge", d3.forceManyBody().strength(-500))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
+            .force("charge", d3.forceManyBody().strength(-600))         // This adds repulsion between nodes. Play with the -400 for the repulsion strength
             .force("center", d3.forceCenter(width / 2, height / 2))     // This force attracts nodes to the center of the svg area
             .on("end", ticked);
 
