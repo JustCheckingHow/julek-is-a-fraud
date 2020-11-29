@@ -88,3 +88,10 @@ def get_rating():
 
     res = {i: str(j) for i, j in res.items()}
     return jsonify(res)
+
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    res = Network('').find_company(request.args['name'].lower())
+    res = {i: str(j) for i, j in res.items()}
+    return jsonify(res)

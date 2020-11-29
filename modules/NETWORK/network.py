@@ -30,6 +30,10 @@ class Network(DataSource):
 
         return {"ConnectionsNetwork": dict(res)}
 
+    def find_company(self, name):
+        names = self.data_sources['Webpages'].index
+        matching = filter(lambda x: name.lower() in x.lower(), names)
+        return {"matching": list(matching)}
     # @staticmethod
     # def get_companies_for_url(url):
     #     filtered = DATA['rank'].apply(lambda x: url in x)
