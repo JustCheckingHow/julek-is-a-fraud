@@ -24,7 +24,6 @@ class CompanyOpinions:
 class OpinionParser:
     def __init__(self) -> None:
         self.hard_url = 'https://opinie-o-brokerach.pl/'
-        self.hard_savepoint = 'opinie.html'
 
 
     def _tf_mapping(self, td_element):

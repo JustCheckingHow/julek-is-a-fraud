@@ -24,14 +24,14 @@ class PolandCheck(DataSource):
     def return_data(self, **kwargs) -> dict:
         for website in self.websites:
             if '.pl' in website:
-                return {"in_poland": True}
+                return {"PolandCheck": True}
         
         is_polish_text = self.check_if_polish_text(self.websites)
         is_on_forex = False
         if ForexReview(self.company_name).return_data()['FOREX'] != '':
             is_on_forex = True 
 
-        return {"in_poland": (is_polish_text or is_on_forex)}
+        return {"PolandCheck": (is_polish_text or is_on_forex)}
 
     def check_if_polish_text(self, website):
         def tag_visible(element):
