@@ -74,7 +74,7 @@ class WhoIs(DataSource):
                     print("WHOIS ERROR:", e, file=sys.stderr)
 
         result = {'WhoIs': out_arr}
-        result['CompanyName'] = self.company_name
+        result['Company Name'] = self.company_name
         return result
     
     def get_whois(self, response):

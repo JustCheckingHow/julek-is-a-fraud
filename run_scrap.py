@@ -11,6 +11,7 @@ from modules.ALEXA_RANK.alexa_rank import AlexaRank
 from modules.WHO_IS.whois_api import WhoIs
 from modules.KNF.knf import KNFCheck
 from modules.NUMBER.number import NumberCheck
+from modules.TFIDF.analyser import TFNeighbour
 import json
 
 MAIN_DATA = './modules/IOSCO/iosco.tsv'
@@ -81,12 +82,16 @@ def iterate_over_companies(source_fn):
 
 if __name__ == "__main__":
     # run_scrapper()
-    for num in ['+48661512422', '48225788692', '48221043705']:
-        nc = NumberCheck('blackrock')
-        print(nc.return_data(number_string=num))
+    # for num in ['+48661512422', '48225788692', '48221043705']:
+    #     nc = NumberCheck('blackrock')
+    #     print(nc.return_data(number_string=num))
 
-    wr = WebpageResolver.reverse_search_name("https://web.coopermarkets.com/")
-    print(wr)
-    # res = investigate_company("blackrock")
-    # print(res)
-    # iterate_over_companies("cache.tsv")
+
+    INDEX_LOC = "modules/TFIDF/pca_index.json"
+    index_set = json.load(open(INDEX_LOC, 'r'))
+    index_set = {int(k): v for k, v in index_set.items()}
+    inverse_indx = {v: k for k, v in index_set.items()}
+
+    for company in inverse_indx:
+        tf = TFNeighbour(company)
+        print(tf.return_data())

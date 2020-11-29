@@ -58,12 +58,14 @@ class MiscWebData(DataSource):
                 if not extracted:
                     continue
 
-                data += [dict(extracted)]
-
                 if len(extracted['phone-polish']) > 0:
+                    nc = NumberCheck(self.company_name)
+                    matches = []
                     for phone in extracted['phone-polish']:
-                        nc = NumberCheck(self.company_name)
-                        print(nc.return_data(number_string=phone))
+                        matches += [nc.return_data(number_string=phone)]
+                    extracted['phone-polish'] = matches
+
+                data += [dict(extracted)]
             except Exception as e:
                 print(e)
 
