@@ -85,23 +85,25 @@ else {
 
 addToTable(company_data, 'CompanyName');
 company_data["WhoIs"] = company_data["WhoIs"]
-  .slice(1, -1).replace(/'/gi, "\"")
-  .replace(/False/gi, "\"False\"")
-  .replace(/True/gi, "\"True\"")
-  .replace(/\[/gi, "\"\[")
-  .replace(/\]/gi, "\]\"");
+// .replace(/False/gi, "\"False\"")
+// .replace(/True/gi, "\"True\"")
+// .replace(/\[/gi, "\"\[")
+// .replace(/\]/gi, "\]\"");
 
-if(company_data["WhoIs"]) {
-  let who_is_company_data = JSON.parse(company_data["WhoIs"]);
-  for (const [key, value] of Object.entries(who_is_company_data)) {
-    addToTable(who_is_company_data, key);
+// let who_is_company_data = JSON.parse(company_data["WhoIs"]);
+let who_is_company_data = company_data["WhoIs"];
+for(const item of who_is_company_data) {
+  for (const [key, value] of Object.entries(item)) {
+    console.log(key);
+    console.log(value);
+    addToTable(item, key);
   }
 }
 
-if(company_data["KNF_whitelist"]) {
+if (company_data["KNF_whitelist"]) {
   let knf_whitelist_table = JSON.parse(company_data["KNF_whitelist"]).slice(1, -1).replace(/'/gi, "\"")
-      .replace(/False/gi, "\"False\"")
-      .replace(/True/gi, "\"True\"");
+    .replace(/False/gi, "\"False\"")
+    .replace(/True/gi, "\"True\"");
 
   const knfListTable = document.getElementById('knf_list_table');
   for (const [key, value] of Object.entries(knf_whitelist)) {

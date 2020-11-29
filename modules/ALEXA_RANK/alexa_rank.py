@@ -40,6 +40,7 @@ class AlexaRank(DataSource):
             return {"AlexaRank": result}
 
         found = []
+        found_full = []
         for webpage in self.webpages:
             page = WebpageResolver.get_html(AlexaRank.ALEXA_ROOT+webpage, stash=False)
 
@@ -48,16 +49,19 @@ class AlexaRank(DataSource):
                 rank = soup.find_all("div", class_="rankmini-rank")[0].text.strip()
                 rank = int(rank.lstrip("#").replace(",",""))
 
-                rank = np.digitize(rank, AlexaRank.BINS)
-                found.append(rank)
+                rank_digit = np.digitize(rank, AlexaRank.BINS)
+                found.append(rank_digit)
+                found_full.append(rank)
             except IndexError:
                 # The page is so small that it's not even indexed in Alexa
                 found.append(4)
+                found_full.append(-1)
 
-        rank = min(found)
+        rank_digit = min(found)
+        rank = min(found_full)
         self.cache.loc[self.company_name] = rank
         self.cache.to_csv(AlexaRank.LOC+"cache.tsv", sep='\t')
-        return {"AlexaRank": rank}
+        return {"AlexaRank": rank_digit, "AlexaRankScore": rank}
 
 
 if __name__ == "__main__":
