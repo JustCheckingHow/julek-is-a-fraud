@@ -25,7 +25,7 @@ class Scamwatcher(DataSource):
         """ Key: Scamwatcher """
         if self.company_name in self.cache.index:
             data = self.cache.loc[self.company_name, 'rank']
-            return {"Scamwatcher": data}
+            return {"Scamwatcher": str(data)}
 
         page = Scamwatcher.PAGE_ROOT.format(self.company_name).replace(" ", "-")
         res = requests.get(page)
@@ -43,5 +43,5 @@ class Scamwatcher(DataSource):
 
         self.cache.loc[self.company_name, 'rank'] = found
         self.cache.to_csv(Scamwatcher.LOC+"cache.tsv", sep='\t')
-        return {"Scamwatcher": bool(found)}
+        return {"Scamwatcher": str(bool(found))}
 
