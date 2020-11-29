@@ -4,6 +4,7 @@ function capitalizeFirstLetter(string) {
 }
 
 function addToTable(company_data, key) {
+  const companyDetailsTable = document.getElementById('company_details_table');
   let tr = document.createElement("TR");
   let td_name = document.createElement("TD");
   let td_value = document.createElement("TD");
@@ -96,8 +97,7 @@ else {
   inPolandValue.innerHTML = company_data["PolandCheck"] === 'True' ? "YES" : "NO";
 }
 
-const companyDetailsTable = document.getElementById('company_details_table');
-
+addToTable(company_data, 'CompanyName');
 company_data["WhoIs"] = company_data["WhoIs"]
   .slice(1, -1).replace(/'/gi, "\"")
   .replace(/False/gi, "\"False\"")
@@ -121,4 +121,8 @@ if(company_data["KNF_whitelist"]) {
     knf_whitelist_table.appendChild(tr);
   }
 }
+
+
+const whiteList = document.getElementById('white_list');
+whiteList.innerHTML = company_data['top_white'];
 
