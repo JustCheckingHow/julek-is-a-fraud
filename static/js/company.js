@@ -37,7 +37,7 @@ function addToTableGen(company_data, key) {
 }
 
 let company_title = document.getElementById('company_title');
-let company_data = JSON.parse(localStorage.getItem('company'));
+company_data = JSON.parse(localStorage.getItem('company'));
 company_title.innerHTML = company_data.name;
 // 
 // LOG THE SHIT
