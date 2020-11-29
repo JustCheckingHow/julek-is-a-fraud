@@ -29,6 +29,7 @@ class BuiltWith(DataSource):
         super().__init__(company_name)
         self.cache = Cache("modules/BUILTWITH/cache")
         self.resolv = WebpageResolver(company_name)
+        self.company_name = self.resolv.company_name
 
     def return_data(self):
         temp_cache = self.cache.check_cache(self.company_name)
@@ -38,7 +39,9 @@ class BuiltWith(DataSource):
         out = []
         for link in self.resolv.return_data()['webpage']:
             try:
-                out.append(builtwith.builtwith(link))
+                res = builtwith.builtwith(link)
+                if res not in out:
+                    out.append(res)
             except Exception as e:
                 print(e, "i co z tego")
 
